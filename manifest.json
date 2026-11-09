@@ -1,0 +1,22 @@
+{
+  "id": "./",
+  "name": "NeuroEng // Prep OS",
+  "short_name": "NeuroEng",
+  "description": "Ambiente de estudo de 14 semanas para a 1ª fase de Engenharia Elétrica (FURB).",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "./index.html#/dashboard",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#09090B",
+  "theme_color": "#09090B",
+  "categories": ["education", "productivity"],
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
+
