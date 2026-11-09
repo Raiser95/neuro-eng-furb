@@ -3,7 +3,7 @@
    IMPORTANTE: ao alterar QUALQUER arquivo local, incremente CACHE_VERSION
    para que os dispositivos baixem a versão nova (estratégia cache-first).
    ========================================================================== */
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 const CACHE_NAME = "neuroeng-prep-os-" + CACHE_VERSION;
 const FONT_CACHE = "neuroeng-fonts-v1";
 
@@ -52,6 +52,11 @@ self.addEventListener("fetch", function (event) {
   const req = event.request;
   if (req.method !== "GET") return;
   const url = new URL(req.url);
+
+  // GitHub API (Cloud Sync via Gist): Network-Only (nunca cachear)
+  if (url.hostname === "api.github.com") {
+    return;
+  }
 
   // Fontes do Google: stale-while-revalidate (opcionais; o app tem fallback de fontes do SO).
   if (url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com") {

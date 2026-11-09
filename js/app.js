@@ -44,6 +44,36 @@
   global.addEventListener("hashchange", route);
   route();
 
+  /* ------------------- Listener de atualização via Cloud -------------------- */
+  global.addEventListener("neuroeng:state-updated", function (e) {
+    // Re-executa rota atual para atualizar tela com dados vindos da nuvem
+    route();
+  });
+
+  /* ---------------------- Indicador de Status da Cloud ---------------------- */
+  const cloudPill = document.getElementById("cloud-pill");
+  function updateCloudUI(st) {
+    if (!cloudPill) return;
+    const dot = cloudPill.querySelector(".cloud-dot");
+    const txt = cloudPill.querySelector(".cloud-text");
+    if (!st) st = (NE.CloudSync && NE.CloudSync.getStatus()) || { status: "disconnected", label: "Cloud: Off" };
+    
+    cloudPill.className = "cloud-indicator cloud-" + st.status;
+    cloudPill.title = st.label + (st.lastSync ? " (Última: " + new Date(st.lastSync).toLocaleTimeString("pt-BR") + ")" : "");
+    if (txt) {
+      if (st.status === "synced") txt.textContent = "Cloud: Synced";
+      else if (st.status === "syncing") txt.textContent = "Cloud: Sync...";
+      else if (st.status === "offline") txt.textContent = "Cloud: Offline";
+      else if (st.status === "error") txt.textContent = "Cloud: Erro";
+      else txt.textContent = "Cloud: Desconectado";
+    }
+  }
+
+  if (NE.CloudSync) {
+    NE.CloudSync.onStatusChange(updateCloudUI);
+    updateCloudUI(NE.CloudSync.getStatus());
+  }
+
   /* ------------------------- PWA: Service Worker offline ------------------------ */
   // Service Workers exigem HTTPS ou localhost (não funcionam em file://).
   if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {

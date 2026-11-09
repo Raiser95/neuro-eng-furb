@@ -189,8 +189,12 @@
         }).join("") + '</div>' +
         '<div class="reco-inline"><strong>Recomendação para a próxima sessão</strong><p>' + esc(reco.text) + '</p></div></div>' +
 
-        '<div class="card"><h3>Backup dos Dados</h3>' +
-        '<p class="small muted">Tudo fica salvo apenas neste navegador. Exporte um JSON de vez em quando.</p>' +
+        '<div class="card" id="card-cloud-sync"><h3>Sincronização em Nuvem (GitHub Gist)</h3>' +
+        '<p class="small muted">Sincronize seu progresso automaticamente entre o PC e o iPhone (iOS Safari). Seu token fica salvo <strong>apenas neste aparelho</strong> (nunca no código ou repositório público).</p>' +
+        '<div id="cloud-sync-body"></div></div>' +
+
+        '<div class="card"><h3>Backup Manual dos Dados</h3>' +
+        '<p class="small muted">Tudo fica salvo no navegador. Exporte um JSON para guardar cópia local adicional.</p>' +
         '<div class="row"><button type="button" class="btn" id="an-export">Exportar JSON</button>' +
         '<label class="btn" for="an-import" tabindex="0">Importar JSON</label>' +
         '<input type="file" id="an-import" accept="application/json,.json" hidden>' +
@@ -198,6 +202,80 @@
         '<p class="small" id="an-msg" role="status"></p></div></section>';
 
       const msg = root.querySelector("#an-msg");
+
+      // Renderização do Card de Cloud Sync
+      const cloudBox = root.querySelector("#cloud-sync-body");
+      function renderCloudBox() {
+        const CS = NE.CloudSync;
+        if (!CS) return;
+        const cfg = CS.getConfig();
+        const st = CS.getStatus();
+        const isConnected = !!cfg.token;
+
+        if (isConnected) {
+          const syncDate = cfg.lastSync ? new Date(cfg.lastSync).toLocaleString("pt-BR") : "Ainda não sincronizado";
+          cloudBox.innerHTML =
+            '<div class="cloud-connected-info">' +
+            '<p class="small">Status: <span class="mono">' + esc(st.label) + '</span><br>' +
+            'Última sincronização: <span class="mono">' + esc(syncDate) + '</span><br>' +
+            'Gist ID: <span class="mono muted">' + esc(cfg.gistId || "Pendente...") + '</span></p>' +
+            '<div class="row">' +
+            '<button type="button" class="btn small-btn primary" id="btn-cloud-now">Sincronizar Agora</button>' +
+            '<button type="button" class="btn small-btn ghost" id="btn-cloud-disconnect">Desconectar Aparelho</button>' +
+            '</div>' +
+            '<p class="small muted" id="cloud-msg" role="status" style="margin-top:0.5rem;"></p>' +
+            '</div>';
+
+          const cMsg = cloudBox.querySelector("#cloud-msg");
+          cloudBox.querySelector("#btn-cloud-now").addEventListener("click", async function () {
+            cMsg.textContent = "Sincronizando com GitHub Gist...";
+            try {
+              await CS.pull();
+              await CS.push();
+              cMsg.textContent = "Sincronizado com sucesso!";
+              render();
+            } catch (err) {
+              cMsg.textContent = "Erro ao sincronizar: " + err.message;
+            }
+          });
+
+          cloudBox.querySelector("#btn-cloud-disconnect").addEventListener("click", function () {
+            if (global.confirm("Deseja desconectar a sincronização em nuvem deste aparelho? Os dados locais serão mantidos.")) {
+              CS.disconnect();
+              renderCloudBox();
+            }
+          });
+        } else {
+          cloudBox.innerHTML =
+            '<div class="cloud-form">' +
+            '<label class="field"><span class="small muted">Personal Access Token (Classic ou Fine-grained com escopo <code>gist</code>):</span>' +
+            '<input type="password" id="input-cloud-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false"></label>' +
+            '<div class="row">' +
+            '<button type="button" class="btn primary small-btn" id="btn-cloud-connect">Conectar & Sincronizar</button>' +
+            '</div>' +
+            '<p class="small muted" id="cloud-msg" role="status" style="margin-top:0.5rem;"></p>' +
+            '</div>';
+
+          const cMsg = cloudBox.querySelector("#cloud-msg");
+          const inputToken = cloudBox.querySelector("#input-cloud-token");
+          cloudBox.querySelector("#btn-cloud-connect").addEventListener("click", async function () {
+            const token = inputToken.value.trim();
+            if (!token) {
+              cMsg.textContent = "Por favor, informe seu token do GitHub.";
+              return;
+            }
+            cMsg.textContent = "Conectando ao GitHub Gist...";
+            try {
+              await CS.connect(token);
+              cMsg.textContent = "Conectado e sincronizado!";
+              render();
+            } catch (err) {
+              cMsg.textContent = "Falha na conexão: " + err.message;
+            }
+          });
+        }
+      }
+      renderCloudBox();
       root.querySelector("#an-export").addEventListener("click", function () {
         const blob = new Blob([S.exportJSON()], { type: "application/json" });
         const a = document.createElement("a");

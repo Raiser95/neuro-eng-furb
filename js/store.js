@@ -38,6 +38,7 @@
     return {
       v: 1,
       createdAt: Date.now(),
+      updatedAt: Date.now(),
       sessions: {},   // id -> progresso da sessão
       errors: [],     // [{t, sessionId, type}]
       timer: null,    // {sessionId, elapsedSec, offsetSec, running, savedAt}
@@ -63,8 +64,14 @@
     return defaults();
   }
 
-  function save() {
-    try { localStorage.setItem(KEY, JSON.stringify(state)); }
+  function save(skipCloudSync) {
+    try {
+      state.updatedAt = Date.now();
+      localStorage.setItem(KEY, JSON.stringify(state));
+      if (!skipCloudSync && CloudSync) {
+        CloudSync.schedulePush();
+      }
+    }
     catch (e) { console.warn("NeuroEng: falha ao salvar", e); }
   }
 
@@ -227,10 +234,266 @@
     }
   };
 
+  /* ==========================================================================
+     Cloud Sync (GitHub Gist API) — Multi-device Sync (PC <-> iOS)
+     Token e Gist ID residem APENAS no localStorage ('neuroeng_cloud_config').
+     ========================================================================== */
+  const CLOUD_KEY = "neuroeng_cloud_config";
+  const GIST_FILENAME = "neuroeng_furb_state.json";
+  let syncTimer = null;
+  let syncListeners = [];
+
+  function loadCloudConfig() {
+    try {
+      const raw = localStorage.getItem(CLOUD_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) { console.warn("NeuroEng: erro ao ler cloud config", e); }
+    return { token: "", gistId: "", lastSync: null, status: "disconnected" };
+  }
+
+  let cloudConfig = loadCloudConfig();
+
+  function saveCloudConfig(cfg) {
+    cloudConfig = Object.assign(cloudConfig, cfg);
+    try { localStorage.setItem(CLOUD_KEY, JSON.stringify(cloudConfig)); }
+    catch (e) { console.warn("NeuroEng: erro ao salvar cloud config", e); }
+    notifyCloudListeners();
+  }
+
+  function notifyCloudListeners() {
+    syncListeners.forEach(function (fn) {
+      try { fn(CloudSync.getStatus()); } catch (e) { /* ignora */ }
+    });
+  }
+
+  const CloudSync = {
+    getConfig() { return Object.assign({}, cloudConfig); },
+    getStatus() {
+      if (!cloudConfig.token) return { status: "disconnected", label: "Cloud: Desconectado", lastSync: cloudConfig.lastSync };
+      if (!navigator.onLine) return { status: "offline", label: "Cloud: Offline", lastSync: cloudConfig.lastSync };
+      if (cloudConfig.status === "syncing") return { status: "syncing", label: "Cloud: Sincronizando...", lastSync: cloudConfig.lastSync };
+      if (cloudConfig.status === "error") return { status: "error", label: "Cloud: Erro na conexão", lastSync: cloudConfig.lastSync };
+      return { status: "synced", label: "Cloud: Sincronizado", lastSync: cloudConfig.lastSync };
+    },
+
+    onStatusChange(fn) {
+      if (typeof fn === "function" && syncListeners.indexOf(fn) === -1) {
+        syncListeners.push(fn);
+      }
+    },
+
+    disconnect() {
+      cloudConfig = { token: "", gistId: "", lastSync: null, status: "disconnected" };
+      try { localStorage.removeItem(CLOUD_KEY); } catch (e) {}
+      notifyCloudListeners();
+    },
+
+    /**
+     * Conecta ou reconecta à API do GitHub Gist.
+     * Busca gist existente com 'neuroeng_furb_state.json' ou cria um novo Gist secreto.
+     */
+    async connect(token) {
+      token = (token || "").trim();
+      if (!token) throw new Error("Token do GitHub não fornecido.");
+      saveCloudConfig({ token: token, status: "syncing" });
+
+      try {
+        const headers = {
+          "Accept": "application/vnd.github+json",
+          "Authorization": "Bearer " + token,
+          "X-GitHub-Api-Version": "2022-11-28"
+        };
+
+        // 1. Procurar gist existente
+        const res = await fetch("https://api.github.com/gists?per_page=100", { headers: headers });
+        if (!res.ok) {
+          const errData = await res.json().catch(function () { return {}; });
+          throw new Error(errData.message || ("Erro HTTP " + res.status));
+        }
+
+        const gists = await res.json();
+        let targetGist = gists.find(function (g) {
+          return g.files && g.files[GIST_FILENAME];
+        });
+
+        if (targetGist) {
+          saveCloudConfig({ gistId: targetGist.id });
+          // Baixar o estado do Gist e fazer merge
+          await CloudSync.pull(true);
+        } else {
+          // Criar novo Gist secreto
+          state.updatedAt = Date.now();
+          const createRes = await fetch("https://api.github.com/gists", {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify({
+              description: "NeuroEng // Prep OS — Cloud Sync Data",
+              public: false,
+              files: {
+                [GIST_FILENAME]: {
+                  content: JSON.stringify(state, null, 2)
+                }
+              }
+            })
+          });
+
+          if (!createRes.ok) {
+            const errData = await createRes.json().catch(function () { return {}; });
+            throw new Error("Falha ao criar Gist: " + (errData.message || createRes.status));
+          }
+
+          const createdGist = await createRes.json();
+          saveCloudConfig({
+            gistId: createdGist.id,
+            lastSync: Date.now(),
+            status: "synced"
+          });
+        }
+
+        return CloudSync.getConfig();
+      } catch (err) {
+        saveCloudConfig({ status: "error" });
+        throw err;
+      }
+    },
+
+    /**
+     * Puxa (GET) estado do Gist se for mais recente que o local.
+     * Retorna true se o estado local foi atualizado.
+     */
+    async pull(force) {
+      if (!cloudConfig.token || !cloudConfig.gistId || !navigator.onLine) return false;
+      saveCloudConfig({ status: "syncing" });
+
+      try {
+        const headers = {
+          "Accept": "application/vnd.github+json",
+          "Authorization": "Bearer " + cloudConfig.token,
+          "X-GitHub-Api-Version": "2022-11-28"
+        };
+
+        const res = await fetch("https://api.github.com/gists/" + cloudConfig.gistId + "?_t=" + Date.now(), {
+          headers: headers
+        });
+
+        if (!res.ok) {
+          if (res.status === 404) {
+            saveCloudConfig({ gistId: "" });
+            throw new Error("Gist não encontrado. Reconecte para recriá-lo.");
+          }
+          throw new Error("HTTP " + res.status);
+        }
+
+        const gistData = await res.json();
+        const fileObj = gistData.files && gistData.files[GIST_FILENAME];
+        if (!fileObj || !fileObj.content) {
+          throw new Error("Arquivo no Gist vazio ou ausente.");
+        }
+
+        const remoteState = JSON.parse(fileObj.content);
+        const remoteUpdated = Number(remoteState.updatedAt || 0);
+        const localUpdated = Number(state.updatedAt || 0);
+
+        if (force || remoteUpdated > localUpdated) {
+          // Atualiza o estado local a partir da nuvem
+          state = Object.assign(defaults(), remoteState);
+          hydrate();
+          // Salva no localStorage local sem disparar novo push em loop
+          localStorage.setItem(KEY, JSON.stringify(state));
+          saveCloudConfig({ lastSync: Date.now(), status: "synced" });
+          global.dispatchEvent(new CustomEvent("neuroeng:state-updated", { detail: { source: "cloud" } }));
+          return true;
+        } else if (localUpdated > remoteUpdated) {
+          // Local está à frente; sobe para a nuvem
+          await CloudSync.push();
+        } else {
+          saveCloudConfig({ lastSync: Date.now(), status: "synced" });
+        }
+        return false;
+      } catch (err) {
+        console.warn("NeuroEng: erro no CloudSync.pull", err);
+        saveCloudConfig({ status: "error" });
+        return false;
+      }
+    },
+
+    /**
+     * Envia (PATCH) estado atual para o Gist.
+     */
+    async push() {
+      if (!cloudConfig.token || !cloudConfig.gistId || !navigator.onLine) return false;
+      saveCloudConfig({ status: "syncing" });
+
+      try {
+        const headers = {
+          "Accept": "application/vnd.github+json",
+          "Authorization": "Bearer " + cloudConfig.token,
+          "X-GitHub-Api-Version": "2022-11-28"
+        };
+
+        const res = await fetch("https://api.github.com/gists/" + cloudConfig.gistId, {
+          method: "PATCH",
+          headers: headers,
+          body: JSON.stringify({
+            files: {
+              [GIST_FILENAME]: {
+                content: JSON.stringify(state, null, 2)
+              }
+            }
+          })
+        });
+
+        if (!res.ok) {
+          throw new Error("Erro ao sincronizar com o Gist: HTTP " + res.status);
+        }
+
+        saveCloudConfig({ lastSync: Date.now(), status: "synced" });
+        return true;
+      } catch (err) {
+        console.warn("NeuroEng: erro no CloudSync.push", err);
+        saveCloudConfig({ status: "error" });
+        return false;
+      }
+    },
+
+    /**
+     * Agenda push debounced de 2 segundos para evitar excesso de requisições.
+     */
+    schedulePush() {
+      if (!cloudConfig.token || !cloudConfig.gistId) return;
+      clearTimeout(syncTimer);
+      syncTimer = setTimeout(function () {
+        CloudSync.push();
+      }, 2000);
+    }
+  };
+
   hydrate();
   NE.U = U;
   NE.Store = Store;
+  NE.CloudSync = CloudSync;
 
   // Garante que o estado do timer vá para o disco ao fechar/ocultar a aba.
   global.addEventListener("pagehide", save);
+
+  // Gatilhos automáticos de sincronização no foco e inicialização
+  global.addEventListener("online", function () {
+    notifyCloudListeners();
+    CloudSync.pull();
+  });
+  global.addEventListener("offline", function () {
+    notifyCloudListeners();
+  });
+
+  // Pull no retorno ao foco (iPhone/PC)
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && cloudConfig.token && cloudConfig.gistId) {
+      CloudSync.pull();
+    }
+  });
+
+  // Sincronização inicial silenciosa no carregamento
+  if (cloudConfig.token && cloudConfig.gistId) {
+    setTimeout(function () { CloudSync.pull(); }, 1000);
+  }
 })(window);

@@ -84,6 +84,36 @@ body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 
 .sidebar a:hover { background: var(--surface); color: var(--text); }
 .sidebar a.active { background: var(--surface-2); color: var(--text); border-color: var(--border); }
 
+/* Indicador Discreto Cloud */
+.cloud-indicator {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem .75rem;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: .75rem;
+  color: var(--text-2);
+}
+.cloud-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--metal);
+  flex: none;
+}
+.cloud-synced .cloud-dot { background: var(--done); }
+.cloud-syncing .cloud-dot { background: #E4E4E7; animation: cloud-pulse 1.2s infinite; }
+.cloud-offline .cloud-dot { background: var(--metal); }
+.cloud-error .cloud-dot { background: #EF4444; }
+.cloud-disconnected .cloud-dot { background: #52525B; }
+@keyframes cloud-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
 /* ------------------------------ Modo Hiperfoco ----------------------------- */
 .zen .sidebar { display: none; }
 .zen .app { grid-template-columns: minmax(0, 1fr); }
@@ -330,6 +360,7 @@ blockquote { margin: 1rem 0 0; padding: .5rem .9rem; border-left: 2px solid var(
   .sidebar a.active::before {
     content: ""; position: absolute; top: -.3rem; left: 28%; right: 28%; height: 2px; border-radius: 2px; background: var(--text);
   }
+  .cloud-indicator { display: none; }
 
   main {
     padding: calc(1.25rem + var(--safe-top)) calc(1rem + var(--safe-right)) calc(6rem + var(--safe-bottom)) calc(1rem + var(--safe-left));
