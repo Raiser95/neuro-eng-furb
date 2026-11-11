@@ -58,7 +58,7 @@
       '<div class="card metric"><span class="mono num">' + st.count + '</span><span class="small muted">' + (st.count === 0 ? "ofensiva · comece quando quiser" : st.alive ? "sessões em ofensiva" : "ofensiva · retome leve com 25 min") + '</span></div>' +
       '</div>' +
 
-      '<div class="card"><div class="subject-top"><h3>Progresso geral · 14 semanas</h3><span class="mono">' + Math.round(done / total * 100) + '%</span></div>' +
+      '<div class="card"><div class="subject-top"><h3>Progresso geral · 14 semanas</h3><span class="mono">' + Math.round(done / total * 100) + '% · ' + (NE.CE ? NE.CE.practiceTotals().correct : 0) + ' exercícios acertados</span></div>' +
       bar(done / total * 100, done === total) +
       '<div class="week-dots" aria-hidden="true">' +
       Array.apply(null, Array(14)).map(function (_, i) {
@@ -112,8 +112,9 @@
           cards.map(function (s) {
             const p = S.session(s.id);
             const prog = p.seconds > 0 && !s.completed;
+            const prSolved = p.practice && p.practice.solved ? p.practice.solved : 0;
             return '<article class="card day ' + (s.completed ? "done" : "") + '">' +
-              '<div class="day-top"><span class="mono eyebrow">DIA ' + s.day + '</span><span class="mono small muted">' + s.durationMinutes + ' min</span></div>' +
+              '<div class="day-top"><span class="mono eyebrow">DIA ' + s.day + '</span><span class="mono small muted">' + s.durationMinutes + ' min' + (prSolved ? ' · ' + prSolved + '/5 questões' : '') + '</span></div>' +
               '<h3>' + esc(s.title) + '</h3>' +
               '<ul class="mini">' + s.mathTopics.map(function (m) { return '<li>' + esc(m) + '</li>'; }).join("") + '</ul>' +
               '<p class="small muted">' + esc(s.furbSubject) + '</p>' +

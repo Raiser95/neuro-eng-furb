@@ -50,7 +50,8 @@
     return {
       completed: false, completedAt: null, mode: null,
       seconds: 0, notes: "", summary: "",
-      topicsDone: [], lines: [], minMode: false, lastPhase: 0
+      topicsDone: [], lines: [], minMode: false, lastPhase: 0,
+      practice: { solved: 0, correct: 0, firstTry: 0, checks: 0, items: {}, gen: null, genCount: 0 }
     };
   }
 

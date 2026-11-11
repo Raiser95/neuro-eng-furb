@@ -143,46 +143,58 @@
     }).join("");
 
     /* --------------------------------- fases ---------------------------------- */
+    let unmountBench = null;
+    const CE = NE.CE;
+
     function renderPhase(idx) {
+      if (unmountBench) { unmountBench(); unmountBench = null; }
       const ph = D.PHASES[idx];
       const t = targetSec();
       const mins = Math.round(ph.pct * t / 60 * 10) / 10;
       const mm = minMode();
+      const theoryHTML = CE ? CE.renderTheory(id) : "";
       let body = "";
 
       if (idx === 0) {
         body =
           '<p class="lead">Entenda o gráfico, o conceito físico/elétrico e o "porquê" antes de escrever qualquer conta.</p>' +
-          '<ul class="plain"><li>Desenhe no papel o gráfico, circuito ou figura que representa o tema.</li>' +
-          '<li>Diga em voz alta: qual grandeza física este tema controla?</li>' +
-          '<li>Leia o mapa abaixo e marque mentalmente o que você já domina.</li></ul>' +
           '<h4>Mapa do dia</h4><ol class="topic-list">' +
           sess.mathTopics.map(function (m, i) {
             return '<li class="' + (mm && i > 1 ? "dim" : "") + '">' + esc(m) + '</li>';
           }).join("") + '</ol>' +
-          '<blockquote>' + esc(sess.weekApplication) + '</blockquote>';
+          '<blockquote>' + esc(sess.weekApplication) + '</blockquote>' +
+          theoryHTML;
       } else if (idx === 1) {
         const done = P().topicsDone;
         body =
-          '<p class="lead">Escreva 100% das passagens no papel — uma operação por linha. O papel é a sua memória operacional externa.</p>' +
-          (mm ? '<p class="note">Modo Mínimo: faça só os dois primeiros blocos. O resto fica para outro dia, sem dívida.</p>' : '') +
+          '<p class="lead">Resolva passo a passo no rascunho ou no papel — uma operação por linha. Confira sua resposta na bancada interativa abaixo.</p>' +
+          (mm ? '<p class="note">Modo Mínimo: resolva as 2 primeiras questões (Nível 1) e marque o dia como concluído sem dívida.</p>' : '') +
+          '<details class="theory-ref"><summary class="mono">Consultar Apostila Direta ao Ponto (Lógica, Receita Passo a Passo &amp; Armadilhas)</summary>' + theoryHTML + '</details>' +
+          '<div id="st-bench"></div>' +
+          '<h4>Checklist de blocos do dia</h4>' +
           '<div class="topic-checks">' +
           sess.mathTopics.map(function (m, i) {
             const off = mm && i > 1;
             return '<label class="check big ' + (off ? "dim" : "") + '"><input type="checkbox" data-t="' + i + '"' +
-              (done.indexOf(i) !== -1 ? " checked" : "") + (off ? " disabled" : "") + '><span><strong>4–6 exercícios:</strong> ' + esc(m) + '</span></label>';
+              (done.indexOf(i) !== -1 ? " checked" : "") + (off ? " disabled" : "") + '><span><strong>Bloco ' + (i + 1) + ':</strong> ' + esc(m) + '</span></label>';
           }).join("") + '</div>';
       } else if (idx === 2) {
         body =
           (mm ? '<p class="note">Fase opcional hoje. Pule sem culpa — ou tente só a primeira parte.</p>' : '') +
-          '<p class="lead">Problema que conecta o básico com Física I, Circuitos ou Cálculo:</p>' +
+          '<p class="lead">Aplicação direta em Física I, Circuitos Elétricos, Sistemas Digitais ou Cálculo (Nível 3 FURB):</p>' +
+          '<details class="theory-ref"><summary class="mono">Consultar Apostila Direta ao Ponto (Teoria &amp; Algoritmo)</summary>' + theoryHTML + '</details>' +
+          '<div id="st-bench"></div>' +
+          '<h4>Desafio integrador da sessão</h4>' +
           '<div class="challenge">' + esc(sess.challengeProblem) + '</div>' +
-          '<details class="answer"><summary>Conferir resposta (só depois de tentar)</summary><p class="mono">' + esc(sess.challengeAnswer) + '</p></details>';
+          '<details class="answer"><summary>Conferir resposta do desafio integrador (só depois de tentar)</summary><p class="mono">' + esc(sess.challengeAnswer) + '</p></details>';
       } else {
         const c = S.errorCounts(id);
+        const pr = P().practice || { solved: 0, correct: 0, firstTry: 0 };
         body =
-          '<p class="lead">Feche o ciclo: registre os erros e escreva 1 linha de resumo conceitual.</p>' +
+          '<p class="lead">Feche o ciclo: confira o balanço da bancada, registre os erros e escreva 1 linha de resumo conceitual.</p>' +
           '<div class="audit">' +
+          '<div class="audit-item"><span class="mono num">' + (pr.solved || 0) + '/5</span><span class="small muted">Questões fixas</span></div>' +
+          '<div class="audit-item"><span class="mono num">' + (pr.correct || 0) + '</span><span class="small muted">Total de acertos</span></div>' +
           D.ERROR_TYPES.map(function (e) {
             return '<div class="audit-item"><span class="mono num" data-audit="' + e.key + '">' + c[e.key] + '</span><span class="small muted">' + esc(e.label) + '</span></div>';
           }).join("") + '</div>' +
@@ -193,6 +205,17 @@
       $("#st-phase-panel").innerHTML =
         '<div class="phase-head"><span class="phase-tag mono">FASE ' + ph.key + ' · ' + Math.round(ph.pct * 100) + '% · ~' + mins + ' min</span>' +
         '<h2>' + esc(ph.name) + '</h2></div>' + body;
+
+      const benchEl = $("#st-bench");
+      if (benchEl && CE) {
+        unmountBench = CE.mountBench(benchEl, {
+          sessionId: id,
+          levels: idx === 2 ? [3] : [1, 2, 3],
+          onErrorLogged: function () {
+            paintErrors("Registrado: Erro de Sinal. Siga em frente.");
+          }
+        });
+      }
 
       $$(".phase-tab").forEach(function (b) {
         const on = Number(b.dataset.i) === idx;
@@ -436,6 +459,7 @@
 
     /* -------------------------------- desmontar -------------------------------- */
     return function unmount() {
+      if (unmountBench) { unmountBench(); unmountBench = null; }
       clearInterval(tickTimer);
       clearTimeout(pulseTimer);
       if (noteTimer) { clearTimeout(noteTimer); const n = root.querySelector("#st-notes"); if (n) { P().notes = n.value; S.save(); } }
