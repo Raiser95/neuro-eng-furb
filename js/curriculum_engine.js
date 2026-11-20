@@ -81,7 +81,8 @@
     const m = UNIT_RE.exec(s);
     if (m) s = m[1];
     let i = 0;
-    const peek = function () { while (s[i] === " ") i++; return s[i]; };
+    const ch = function (idx) { return idx < s.length ? s.charAt(idx) : undefined; };
+    const peek = function () { while (ch(i) === " ") i++; return ch(i); };
     function fail() { throw new Error("parse"); }
 
     function parseExpression() {
@@ -99,7 +100,7 @@
         const c = peek();
         if (c === "*") { i++; v *= parseUnary(); }
         else if (c === "/") { i++; v /= parseUnary(); }
-        else if (s[i] !== undefined && /[\d.(a-z]/.test(s[i]) && i > 0 && s[i - 1] !== " ") { v *= parseUnary(); }
+        else if (ch(i) !== undefined && /[\d.(a-z]/.test(ch(i)) && i > 0 && ch(i - 1) !== " ") { v *= parseUnary(); }
         else return v;
       }
     }
@@ -277,7 +278,7 @@
     return bank.map(function (fid, i) {
       let seed = sessionId * 1000 + (i + 1) * 37 + 7, q = make(fid, seed), tries = 0;
       while (q && seen[q.text] && tries++ < 8) { seed += 101; q = make(fid, seed); }
-      if (q) { seen[q.text] = 1; q.id = "f" + (i + 1); q.n = i + 1; }
+      if (q) { seen[q.text] = 1; q.id = "f" + (i + 1); q.idx = i + 1; }
       return q;
     }).filter(Boolean);
   }
@@ -368,7 +369,7 @@
       let h = fixedQs.map(function (q) {
         const it = prac().items[q.id];
         const mark = it ? (it.ok ? "✓" : it.closed ? "◐" : "•") : "";
-        return '<button type="button" role="tab" class="q-tab' + (curKey === q.id ? " active" : "") + '" data-k="' + q.id + '"><span class="mono">Q' + q.n + '</span> N' + q.level + ' <span class="mk">' + mark + '</span></button>';
+        return '<button type="button" role="tab" class="q-tab' + (curKey === q.id ? " active" : "") + '" data-k="' + q.id + '"><span class="mono">Q' + q.idx + '</span> N' + q.level + ' <span class="mk">' + mark + '</span></button>';
       }).join("");
       h += '<button type="button" role="tab" class="q-tab' + (curKey === "g" ? " active" : "") + '" data-k="g"><span class="mono">∞</span> Gerador</button>';
       $("#bn-tabs").innerHTML = h;

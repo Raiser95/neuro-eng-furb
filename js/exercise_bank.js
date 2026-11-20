@@ -76,13 +76,14 @@
       "Resultado: " + b(v)]);
   });
   D("reqSP", 3, function (r) {
-    const pr = r.pick([[6, 3, 2], [12, 4, 3], [20, 5, 4], [30, 60, 20], [40, 10, 8], [15, 10, 6], [60, 20, 15], [30, 20, 12]]);
-    const R1 = r.pick([10, 15, 20, 25, 30]);
-    return Q.num("O resistor R₁ = " + R1 + " Ω está em série com a associação em paralelo de R₂ = " + pr[0] + " Ω e R₃ = " + pr[1] + " Ω. Calcule a resistência equivalente Req.", R1 + pr[2], "Ω", [
-      "Dados: R₁ = " + R1 + " Ω; R₂ ‖ R₃ com " + pr[0] + " Ω e " + pr[1] + " Ω",
-      "Paralelo: R₂·R₃/(R₂+R₃) = " + pr[0] * pr[1] + "/" + (pr[0] + pr[1]) + " = " + b(pr[2] + " Ω"),
-      "Série: Req = R₁ + (R₂‖R₃) = " + R1 + " + " + pr[2],
-      "Req = " + b((R1 + pr[2]) + " Ω")]);
+    const pr = r.pick([[6, 3], [12, 4], [20, 5], [30, 60], [40, 10], [15, 10], [60, 20], [30, 20]]);
+    const R2 = pr[0], R3 = pr[1], Rp = (R2 * R3) / (R2 + R3);
+    const R1 = r.pick([10, 15, 20, 25, 30]), Req = R1 + Rp;
+    return Q.num("O resistor R₁ = " + R1 + " Ω está em série com a associação em paralelo de R₂ = " + R2 + " Ω e R₃ = " + R3 + " Ω. Calcule a resistência equivalente Req.", Req, "Ω", [
+      "Dados: R₁ = " + R1 + " Ω; R₂ ‖ R₃ com " + R2 + " Ω e " + R3 + " Ω",
+      "Paralelo: R₂·R₃/(R₂+R₃) = " + (R2 * R3) + "/" + (R2 + R3) + " = " + b(Rp + " Ω"),
+      "Série: Req = R₁ + (R₂‖R₃) = " + R1 + " + " + Rp,
+      "Req = " + b(Req + " Ω")]);
   });
   D("fracSimp", 1, function (r) {
     let a, c; do { a = r.int(1, 9); c = r.int(2, 11); } while (gcd(a, c) !== 1 || a === c);
@@ -135,13 +136,15 @@
       "Resultado: " + b(ratStr(q))]);
   });
   D("parallel3", 3, function (r) {
-    const t = r.pick([[12, 20, 30, 6], [6, 12, 4, 2], [10, 15, 30, 5], [20, 30, 60, 10], [8, 8, 4, 2], [24, 12, 8, 4]]);
+    const t = r.pick([[12, 20, 30], [6, 12, 4], [10, 15, 30], [20, 30, 60], [8, 8, 4], [24, 12, 8]]);
     const L = lcm(lcm(t[0], t[1]), t[2]);
-    return Q.num("Três resistores de " + t[0] + " Ω, " + t[1] + " Ω e " + t[2] + " Ω estão em paralelo. Calcule a resistência equivalente.", t[3], "Ω", [
+    const sumNum = (L / t[0]) + (L / t[1]) + (L / t[2]);
+    const req = L / sumNum;
+    return Q.num("Três resistores de " + t[0] + " Ω, " + t[1] + " Ω e " + t[2] + " Ω estão em paralelo. Calcule a resistência equivalente.", req, "Ω", [
       "Fórmula: 1/Req = 1/R₁ + 1/R₂ + 1/R₃",
-      "MMC(" + t.slice(0, 3).join(", ") + ") = " + b(L),
-      "1/Req = " + L / t[0] + "/" + L + " + " + L / t[1] + "/" + L + " + " + L / t[2] + "/" + L + " = " + (L / t[0] + L / t[1] + L / t[2]) + "/" + L,
-      "Inverta: Req = " + L + "/" + (L / t[0] + L / t[1] + L / t[2]) + " = " + b(t[3] + " Ω")]);
+      "MMC(" + t.join(", ") + ") = " + b(L),
+      "1/Req = " + (L / t[0]) + "/" + L + " + " + (L / t[1]) + "/" + L + " + " + (L / t[2]) + "/" + L + " = " + sumNum + "/" + L,
+      "Inverta: Req = " + L + "/" + sumNum + " = " + b(req + " Ω")]);
   });
   D("lcm", 1, function (r) {
     let x, y; do { x = r.pick([4, 6, 8, 9, 10, 12, 14, 15, 18, 20, 21, 24]); y = r.pick([4, 6, 8, 9, 10, 12, 14, 15, 18, 20, 21, 24]); } while (x === y);
@@ -285,11 +288,13 @@
   });
   D("sqrtOps", 2, function (r) {
     if (r.next() < 0.5) {
-      const t = r.pick([[12, 3, 6], [8, 2, 4], [18, 2, 6], [50, 2, 10], [27, 3, 9], [45, 5, 15]]);
-      return Q.num("Calcule √" + t[0] + " · √" + t[1], t[2], "", ["Produto de raízes: √a · √b = √(a·b)", "√(" + t[0] + "·" + t[1] + ") = √" + t[0] * t[1], "√" + t[0] * t[1] + " = " + b(t[2])]);
+      const t = r.pick([[12, 3], [8, 2], [18, 2], [50, 2], [27, 3], [45, 5]]);
+      const ans = Math.round(Math.sqrt(t[0] * t[1]));
+      return Q.num("Calcule √" + t[0] + " · √" + t[1], ans, "", ["Produto de raízes: √a · √b = √(a·b)", "√(" + t[0] + "·" + t[1] + ") = √" + (t[0] * t[1]), "√" + (t[0] * t[1]) + " = " + b(ans)]);
     }
-    const t = r.pick([[50, 2, 5], [72, 2, 6], [98, 2, 7], [48, 3, 4], [75, 3, 5]]);
-    return Q.num("Calcule √" + t[0] + " ÷ √" + t[1], t[2], "", ["Quociente de raízes: √a ÷ √b = √(a÷b)", "√(" + t[0] + "÷" + t[1] + ") = √" + t[0] / t[1], "√" + t[0] / t[1] + " = " + b(t[2])]);
+    const t = r.pick([[50, 2], [72, 2], [98, 2], [48, 3], [75, 3]]);
+    const ans = Math.round(Math.sqrt(t[0] / t[1]));
+    return Q.num("Calcule √" + t[0] + " ÷ √" + t[1], ans, "", ["Quociente de raízes: √a ÷ √b = √(a÷b)", "√(" + t[0] + "÷" + t[1] + ") = √" + (t[0] / t[1]), "√" + (t[0] / t[1]) + " = " + b(ans)]);
   });
   D("resonance", 3, function (r) {
     const k = r.pick([1, 4, 16, 25, 100]), w = 1000 / Math.sqrt(k);
@@ -415,10 +420,10 @@
       "Em mV: " + b(fmt(v, 3) + " mV")]);
   });
   D("hex2dec", 1, function (r) {
-    const h = r.int(16, 255), s = h.toString(16).toUpperCase(), d1 = parseInt(s[0], 16), d2 = parseInt(s[1], 16);
+    const h = r.int(16, 255), s = h.toString(16).toUpperCase(), d1 = parseInt(s.charAt(0), 16), d2 = parseInt(s.charAt(1), 16);
     return Q.num("Converta 0x" + s + " para decimal.", h, "", [
       "Cada dígito hexa vale 16ⁿ: dígito esquerdo ×16, direito ×1",
-      s[0] + " = " + d1 + " e " + s[1] + " = " + d2,
+      s.charAt(0) + " = " + d1 + " e " + s.charAt(1) + " = " + d2,
       d1 + " × 16 + " + d2 + " = " + d1 * 16 + " + " + d2,
       "Resultado: " + b(h)]);
   });
@@ -426,14 +431,14 @@
     const v = r.int(16, 255), bin = ("00000000" + v.toString(2)).slice(-8), h = v.toString(16).toUpperCase();
     return Q.str("Converta " + bin.slice(0, 4) + " " + bin.slice(4) + sub(2) + " para hexadecimal.", h, "hex", [
       "Agrupe de 4 em 4 bits: " + bin.slice(0, 4) + " | " + bin.slice(4),
-      bin.slice(0, 4) + " = " + parseInt(bin.slice(0, 4), 2) + " = " + h[0] + " ; " + bin.slice(4) + " = " + parseInt(bin.slice(4), 2) + " = " + h[1],
+      bin.slice(0, 4) + " = " + parseInt(bin.slice(0, 4), 2) + " = " + h.charAt(0) + " ; " + bin.slice(4) + " = " + parseInt(bin.slice(4), 2) + " = " + h.charAt(1),
       "Resultado: " + b("0x" + h)], { fmt: "Dígitos 0–9 e A–F" });
   });
   D("dec2hex", 2, function (r) {
     const v = r.int(32, 255), h = v.toString(16).toUpperCase();
     return Q.str("Converta " + v + " (decimal) para hexadecimal.", h, "hex", [
       v + " ÷ 16 = " + Math.floor(v / 16) + " resto " + v % 16,
-      "Dígitos: " + Math.floor(v / 16) + " → " + h[0] + " ; " + v % 16 + " → " + h[1] + " (10=A, 11=B, 12=C, 13=D, 14=E, 15=F)",
+      "Dígitos: " + Math.floor(v / 16) + " → " + h.charAt(0) + " ; " + v % 16 + " → " + h.charAt(1) + " (10=A, 11=B, 12=C, 13=D, 14=E, 15=F)",
       "Resultado: " + b("0x" + h)], { fmt: "Dígitos 0–9 e A–F" });
   });
   D("twosComp", 2, function (r) {
@@ -635,11 +640,11 @@
       "Raízes: " + b(r1 + " e " + fmt(k / 2))]);
   });
   D("perfSquareRoot", 2, function (r) {
-    const p = r.int(2, 5), q = r.int(1, 7);
-    return Q.frac("O trinômio " + poly(p * p, -2 * p * q, q * q) + " é um quadrado perfeito. Qual sua raiz dupla?", q, p, "", [
+    const p = r.int(2, 5), q = r.int(1, 7), res = rat(q, p);
+    return Q.frac("O trinômio " + poly(p * p, -2 * p * q, q * q) + " é um quadrado perfeito. Qual sua raiz dupla?", res.n, res.d, "", [
       "Reconheça: (" + p + "x)² − 2·(" + p + "x)·" + q + " + " + q + "²",
       "Forma fatorada: (" + p + "x − " + q + ")²",
-      "Raiz dupla: " + p + "x − " + q + " = 0 → x = " + b(q + "/" + p)]);
+      "Raiz dupla: " + p + "x − " + q + " = 0 → x = " + q + "/" + p + " = " + b(ratStr(res))]);
   });
   D("poles", 3, function (r) {
     let a, bb; do { a = r.int(1, 8); bb = r.int(1, 8); } while (a === bb);
@@ -717,12 +722,13 @@
       "x = " + L * c + "/" + (L / a + L / bb) + " = " + b(x)]);
   });
   D("solveFormula", 2, function (r) {
-    const t = r.pick([[12, 9, 16], [24, 36, 16], [120, 240, 60], [10, 20, 5]]);
-    return Q.num("Em P = V²/R, isole R e calcule para V = " + t[0] + " V e P = " + t[1] + " W.", t[2], "Ω", [
+    const t = r.pick([[12, 9], [24, 36], [120, 240], [10, 20]]);
+    const V = t[0], P = t[1], R = (V * V) / P;
+    return Q.num("Em P = V²/R, isole R e calcule para V = " + V + " V e P = " + P + " W.", R, "Ω", [
       "P = V²/R → multiplique por R: P·R = V²",
       "Divida por P: <b>R = V²/P</b>",
-      "R = " + t[0] + "²/" + t[1] + " = " + t[0] * t[0] + "/" + t[1],
-      "R = " + b(t[2] + " Ω")]);
+      "R = " + V + "²/" + P + " = " + (V * V) + "/" + P,
+      "R = " + b(R + " Ω")]);
   });
   D("dividerDesign", 3, function (r) {
     let Vs, R1, R2, tries = 0, vo;
@@ -927,8 +933,8 @@
     const a = r.int(2, 6), bb = r.int(-12, 12), q = rat(-bb, a);
     return Q.frac("Em que valor de x a função " + a + "x " + sgn(bb) + " " + Math.abs(bb) + " muda de sinal?", q.n, q.d, "", [
       "Muda de sinal na raiz: " + a + "x " + sgn(bb) + " " + Math.abs(bb) + " = 0",
-      "x = " + b(ratStr(q)),
-      "Como a > 0, é negativa antes e positiva depois"]);
+      "Como a > 0, é negativa antes e positiva depois da raiz",
+      "x = " + b(ratStr(q))]);
   });
   D("quadIneqCount", 1, function (r) {
     let r1, r2; do { r1 = r.int(-6, 4); r2 = r.int(r1 + 2, r1 + 9); } while (false);
@@ -1374,16 +1380,19 @@
   });
   D("unitVec2", 2, function (r) {
     const t = r.pick(TRI), s1 = r.sign(), s2 = r.sign(), ux = s1 * t[0], uy = s2 * t[1];
-    return Q.list("Determine o versor û = u/|u| do vetor u = (" + ux + ", " + uy + "). Informe ûx ; ûy.", [ux / t[2], uy / t[2]], "ûx ; ûy", "", [
-      "|u| = √(" + ux * ux + " + " + uy * uy + ") = " + t[2],
-      "Divida cada componente por " + t[2] + ": û = (" + b(ux + "/" + t[2]) + ", " + b(uy + "/" + t[2]) + ")"], { ordered: true });
+    const norm = Math.round(Math.sqrt(ux * ux + uy * uy)), vx = ux / norm, vy = uy / norm;
+    const qx = rat(ux, norm), qy = rat(uy, norm);
+    return Q.list("Determine o versor û = u/|u| do vetor u = (" + ux + ", " + uy + "). Informe ûx ; ûy.", [vx, vy], "ûx ; ûy", "", [
+      "|u| = √(" + ux * ux + " + " + uy * uy + ") = " + norm,
+      "Divida cada componente por " + norm + ": û = (" + ratStr(qx) + ", " + ratStr(qy) + ") = (" + b(fmt(vx) + " ; " + fmt(vy)) + ")"], { ordered: true });
   });
   D("vec3Norm", 1, function (r) {
-    const L = [[1, 2, 2, 3], [2, 3, 6, 7], [1, 4, 8, 9], [2, 6, 9, 11], [3, 4, 12, 13], [4, 4, 2, 6]];
+    const L = [[1, 2, 2], [2, 3, 6], [1, 4, 8], [2, 6, 9], [3, 4, 12], [4, 4, 2]];
     const t = r.pick(L), s1 = r.sign(), s2 = r.sign(), s3 = r.sign();
-    return Q.num("Calcule o módulo |v| do vetor 3D v = (" + s1 * t[0] + ", " + s2 * t[1] + ", " + s3 * t[2] + ").", t[3], "", [
-      "|v| = √(vx² + vy² + vz²) = √(" + t[0] * t[0] + " + " + t[1] * t[1] + " + " + t[2] * t[2] + ") = √" + t[3] * t[3],
-      "|v| = " + b(t[3])]);
+    const sumSq = t[0] * t[0] + t[1] * t[1] + t[2] * t[2], norm = Math.round(Math.sqrt(sumSq));
+    return Q.num("Calcule o módulo |v| do vetor 3D v = (" + s1 * t[0] + ", " + s2 * t[1] + ", " + s3 * t[2] + ").", norm, "", [
+      "|v| = √(vx² + vy² + vz²) = √(" + t[0] * t[0] + " + " + t[1] * t[1] + " + " + t[2] * t[2] + ") = √" + sumSq,
+      "|v| = " + b(norm)]);
   });
   D("vecAB3", 2, function (r) {
     const a = [r.int(-5, 5), r.int(-5, 5), r.int(-5, 5)], bb = [r.int(-5, 5), r.int(-5, 5), r.int(-5, 5)];
