@@ -65,6 +65,7 @@
       '<h1>' + esc(sess.title) + '</h1>' +
       '<p class="muted small">' + esc(sess.weekTheme) + '</p></div>' +
       '<div class="study-head-actions">' +
+      '<button class="btn small-btn" id="st-formulas" type="button" title="Abrir Fórmulas Prontas desta Sessão">∑ Fórmulas da Sessão</button>' +
       '<button class="btn ghost zen-only" id="st-exit" type="button">← Sair do Hiperfoco</button>' +
       '<a class="btn ghost pre-only" href="#/schedule">← Cronograma</a>' +
       (sess.completed ? '<span class="chip chip-done">Concluída</span>' : '') +
@@ -325,6 +326,10 @@
 
     $("#st-toggle").addEventListener("click", function () { setRunning(!running); });
 
+    $("#st-formulas").addEventListener("click", function () {
+      if (NE.Formulas) NE.Formulas.openDrawer(id);
+    });
+
     $("#st-exit").addEventListener("click", function () {
       setRunning(false);
       document.body.classList.remove("zen");
@@ -459,6 +464,7 @@
 
     /* -------------------------------- desmontar -------------------------------- */
     return function unmount() {
+      if (NE.Formulas) NE.Formulas.closeDrawer();
       if (unmountBench) { unmountBench(); unmountBench = null; }
       clearInterval(tickTimer);
       clearTimeout(pulseTimer);

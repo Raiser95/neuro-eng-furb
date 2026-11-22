@@ -3,7 +3,7 @@
    IMPORTANTE: ao alterar QUALQUER arquivo local, incremente CACHE_VERSION
    para que os dispositivos baixem a versão nova (estratégia cache-first).
    ========================================================================== */
-const CACHE_VERSION = "v4";
+const CACHE_VERSION = "v5";
 const CACHE_NAME = "neuroeng-prep-os-" + CACHE_VERSION;
 const FONT_CACHE = "neuroeng-fonts-v1";
 
@@ -21,6 +21,7 @@ const PRECACHE = [
   "js/theory_4.js",
   "js/curriculum_engine.js",
   "js/exercise_bank.js",
+  "js/formulas.js",
   "js/audio.js",
   "js/study.js",
   "js/lab.js",

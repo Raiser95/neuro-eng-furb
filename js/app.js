@@ -10,6 +10,7 @@
   const ROUTES = {
     dashboard: function () { return NE.Views.dashboard(root); },
     schedule:  function () { return NE.Views.schedule(root); },
+    formulas:  function () { return NE.Formulas.mount(root); },
     lab:       function () { return NE.Lab.mount(root); },
     analytics: function () { return NE.Views.analytics(root); }
   };

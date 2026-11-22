@@ -343,7 +343,8 @@
 
     root.innerHTML =
       '<div class="bench"><div class="bench-head"><h3>Bancada de Resolução e Verificação</h3>' +
-      '<span class="small muted mono" id="bn-stats"></span></div>' +
+      '<div class="row tight"><span class="small muted mono" id="bn-stats"></span>' +
+      '<button type="button" class="btn ghost small-btn" id="bn-formulas">∑ Fórmulas da Sessão</button></div></div>' +
       '<div class="q-tabs" id="bn-tabs" role="tablist"></div>' +
       '<div class="q-card"><div class="q-meta"><span class="q-level mono" id="bn-level"></span><span class="q-fmt small muted" id="bn-fmt"></span></div>' +
       '<div class="q-text" id="bn-text"></div>' +
@@ -496,6 +497,10 @@
     $("#bn-other").addEventListener("click", function () {
       newGen(null, false);
       show("g");
+    });
+    const fBtn = $("#bn-formulas");
+    if (fBtn) fBtn.addEventListener("click", function () {
+      if (NE.Formulas) NE.Formulas.openDrawer(sid);
     });
 
     show(curKey);
