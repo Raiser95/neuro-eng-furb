@@ -465,4 +465,102 @@
       `Substituir x = a direto, ver 0/0 e travar ou declarar que não existe. Contramedida: escreva 0/0 → fatorar → cancelar → substituir como roteiro de 4 passos fixo.`
     ]
   };
+
+  /* ================ MACETES OPERACIONAIS (SEMANAS 1 A 4) ================ */
+  T[1].shortcut = {
+    title: "Pareamento de Dezenas & Cancelamento Antes de Multiplicar",
+    rule: "a − b·(c − d) = a + b·(d − c)  (quando d > c)   |   (A · k) ÷ k = A",
+    when: "Quando o interior do parêntese dá negativo precedido de sinal de menos: inverta a subtração interna (d − c > 0) e troque o sinal externo para + na mesma linha.",
+    caution: "Só inverta o sinal externo se o parêntese estiver MULTIPLICANDO o termo. Não pule a hierarquia (× e ÷ sempre antes de + e −)."
+  };
+  T[2].shortcut = {
+    title: "Método da Borboleta (Produto Cruzado para 2 Frações)",
+    rule: "a/b ± c/d = (a·d ± b·c) / (b·d)   |   Em divisão: (a/b) ÷ (c/d) = (a·d) / (b·c)",
+    when: "Use quando somar ou subtrair apenas 2 frações de denominadores pequenos ou primos entre si, pulando a fatoração do MMC.",
+    caution: "Evite quando houver 3 ou mais frações ou denominadores grandes com fator comum (ex.: 12 e 18), pois b·d gera números altos e exige simplificação obrigatória no final."
+  };
+  T[3].shortcut = {
+    title: "MMC Instantâneo por Múltiplo do Maior & Atalho R₁‖R₂",
+    rule: "Teste k · maior (k = 1, 2, 3…) até dividir o menor   |   R_eq(2) = (R₁ · R₂) / (R₁ + R₂)",
+    when: "Para achar MMC(a, b) rápido: pegue o maior número e dobre/triplique mentalmente até ser divisível pelo menor (ex.: 12 e 18 → 18×2 = 36, divide por 12 ✓).",
+    caution: "O atalho R_eq = (R₁·R₂)/(R₁+R₂) vale EXCLUSIVAMENTE para 2 resistores em paralelo. Para 3 resistores, jamais faça (R₁R₂R₃)/(R₁+R₂+R₃)!"
+  };
+  T[4].shortcut = {
+    title: "Paridade de SinaisNegativos & Regra do Divisor por Partes",
+    rule: "Quantidade PAR de sinais (−) no produto/divisão ⇒ (+)   |   ÍMPAR ⇒ (−)\nEm série (R₂ = k·R₁):  V₂ = V_in · [ k / (1 + k) ]",
+    when: "Em produtos ou frações longas, conte todos os sinais negativos de uma vez só antes de multiplicar os módulos. No divisor de tensão, simplifique a razão entre os resistores antes de multiplicar por V_in.",
+    caution: "A regra da paridade de sinais vale APENAS para multiplicação e divisão — nunca aplique \"menos com menos dá mais\" em uma soma do tipo −4 − 5 = −9."
+  };
+  T[5].shortcut = {
+    title: "Elevador de Expoente & Cancelamento Direto kΩ × mA",
+    rule: "1 / a⁻ⁿ = a⁺ⁿ   |   10³ (kΩ) · 10⁻³ (mA) = 10⁰ = 1 V   |   10⁶ (MΩ) · 10⁻⁶ (μA) = 1 V",
+    when: "Ao mover uma potência entre numerador e denominador, basta trocar o sinal do expoente. Em circuitos, kΩ × mA dá volts direto sem escrever zeros.",
+    caution: "Só cancele prefixos complementares em multiplicações (V = R·I). Em divisões (I = V/R com V em volts e R em kΩ), 10⁰ / 10³ sobe como 10⁻³ (mA)."
+  };
+  T[6].shortcut = {
+    title: "Extração Rápida de Quadrados Perfeitos & Atalho ÷√2",
+    rule: "√(k² · m) = k√m   |   X / √2 = X · √2 / 2 ≈ 0,7071 · X",
+    when: "Para simplificar √N rápido, divida N pelo maior quadrado perfeito visível (4, 9, 16, 25, 36, 49, 64, 100). Em CA, converter V_pico em V_rms é multiplicar por 0,7071.",
+    caution: "Nunca separe raiz de soma: √(a² + b²) NÃO é a + b (erro fatal em Pitágoras e impedância Z = √(R² + X²))."
+  };
+  T[7].shortcut = {
+    title: "Balanço de Casas Decimais & Atalho kΩ × nF = μs",
+    rule: "Diminuiu a mantissa (← k casas) ⇒ SOMA +k no expoente 10ⁿ\nR(kΩ) · C(μF) = τ(s)   |   R(kΩ) · C(nF) = τ(μs)   |   R(MΩ) · C(μF) = τ(s)",
+    when: "Use a conservação do valor ao ajustar notação científica: se a vírgula andou para a esquerda (mantissa diminuiu), o expoente de 10 sobe na mesma quantidade.",
+    caution: "Para SOMAR ou SUBTRAIR números em notação científica, você NÃO pode somar os expoentes: iguale primeiro na maior potência de 10."
+  };
+  T[8].shortcut = {
+    title: "Conjugado Instantâneo & Lei do Inverso do Quadrado por Fator",
+    rule: "c / (√a ± √b) = c·(√a ∓ √b) / (a − b)   |   Se r → k·r, então F → F / k²",
+    when: "Quando a distância r dobra (k=2), a força de Coulomb cai por 4; quando triplica (k=3), cai por 9; quando cai pela metade, a força multiplica por 4 — sem recalcular k·q₁·q₂!",
+    caution: "Ao usar a fórmula completa de Coulomb com r em centímetros (10⁻² m), lembre-se de que r² eleva TANTO o número QUANTO a potência: (30×10⁻²)² = 900×10⁻⁴ = 0,09 m²."
+  };
+  T[9].shortcut = {
+    title: "Régua de Pesos de 8 Bits & Teste de Paridade no LSB",
+    rule: "Pesos:  128 | 64 | 32 | 16 | 8 | 4 | 2 | 1\nTodos os n bits em 1:  11…1₂ = 2ⁿ − 1",
+    when: "Em vez de multiplicar por 2⁰, 2¹…, escreva a régua 128-64-32-16-8-4-2-1 acima dos bits e some apenas onde houver 1. Confira sempre o último bit (LSB): ímpar termina em 1, par termina em 0.",
+    caution: "Não confunda a quantidade de estados (2ⁿ) com o maior valor representável sem sinal (2ⁿ − 1, pois o zero consome um estado)."
+  };
+  T[10].shortcut = {
+    title: "Empacotamento Nibble 8-4-2-1 & Complemento de 2 a partir do 1º '1'",
+    rule: "Binário ↔ Hex: corte de 4 em 4 bits (pesos 8-4-2-1 em cada bloco)\nComplemento de 2 rápido: da direita p/ esquerda, copie tudo até o primeiro '1' (inclusive) e inverta o resto.",
+    when: "Para achar −X em complemento de 2 em 3 segundos: olhe da direita para a esquerda, mantenha os zeros e o primeiro 1 intactos, e inverta todos os bits à esquerda dele.",
+    caution: "O atalho do complemento de 2 exige que o número positivo original já esteja preenchido com zeros à esquerda no tamanho exato da palavra (ex.: 8 bits)."
+  };
+  T[11].shortcut = {
+    title: "Elemento Absorvente Booleano (Curto-Circuito Lógico)",
+    rule: "Qualquer coisa · 0 = 0 (AND com 0 zera tudo)   |   Qualquer coisa + 1 = 1 (OR com 1 satura em 1)",
+    when: "Antes de avaliar uma expressão booleana grande, procure se há um 0 multiplicando um bloco AND ou um 1 somando num bloco OR — você descarta o resto da expressão na hora.",
+    caution: "Respeite a precedência booleana: NOT (¬) primeiro, depois parênteses, depois AND (·) e por último OR (+)."
+  };
+  T[12].shortcut = {
+    title: "Quebra a Barra, Troca o Sinal (De Morgan) & Absorção Direta",
+    rule: "¬(X · Y) = ¬X + ¬Y   |   ¬(X + Y) = ¬X · ¬Y\nA + A·B = A   |   A + ¬A·B = A + B",
+    when: "Em De Morgan, quebre a barra longa sobre o operador e troque (· por +) ou (+ por ·). Na absorção A + ¬A·B, o termo ¬A colado em B simplesmente desaparece.",
+    caution: "Ao quebrar a barra de De Morgan sobre termos compostos, coloque parênteses em cada subexpressão para não errar a prioridade do AND sobre o OR."
+  };
+  T[13].shortcut = {
+    title: "Cálculo Mental por Diferença de Quadrados",
+    rule: "(N − k)(N + k) = N² − k²   (ex.: 97 × 103 = 100² − 3² = 9991)\n[(x + h)² − x²] / h = 2x + h",
+    when: "Sempre que multiplicar dois números simétricos em relação a uma dezena ou centena (como 98×102 ou 47×53), use N² − k² mentalmente.",
+    caution: "Em (a − b)² = a² − 2ab + b², o último termo (+b²) é SEMPRE positivo; só o termo central 2ab leva o sinal negativo."
+  };
+  T[14].shortcut = {
+    title: "Inspeção Rápida de Agrupamento 2 a 2",
+    rule: "a·x + a·y + b·x + b·y = (a + b)(x + y)",
+    when: "Quando uma expressão tiver 4 termos e a razão entre o 1º e o 2º coeficiente for igual à razão entre o 3º e o 4º, ela fatora diretamente no produto de dois binômios.",
+    caution: "Se o 3º termo começar com sinal negativo (ex.: ax + ay − bx − by), ao colocar −b em evidência o sinal interno INVERTE: −b(x + y)."
+  };
+  T[15].shortcut = {
+    title: "Soma e Produto Mental (Girard) para a = 1",
+    rule: "x² − S·x + P = 0  ⇒  Raízes x₁, x₂ tais que x₁ + x₂ = S  e  x₁ · x₂ = P\nEm polos estáveis (s² + bs + c = 0 com b, c > 0): as duas raízes são NEGATIVAS.",
+    when: "Quando o coeficiente de x² é 1, liste mentalmente os pares de divisores de c (Produto) e escolha o par cuja soma é −b. É 4× mais rápido que abrir Bhaskara.",
+    caution: "Lembre-se de que a Soma das raízes tem o SINAL TROCADO em relação ao coeficiente b (S = −b/a). Se o polinômio é s² + 7s + 12, a soma das raízes é −7 (raízes −3 e −4)."
+  };
+  T[16].shortcut = {
+    title: "Teorema do Fator em Indeterminações 0/0",
+    rule: "Se P(a) = 0 e Q(a) = 0 em lim_(x→a) P(x)/Q(x), então (x − a) é GARANTIDAMENTE fator de ambos!\nPara x² + bx + c = (x − a)(x − r₂), a outra raiz é imediatamente r₂ = −c / a.",
+    when: "Em qualquer limite que dê 0/0 quando x → a, você não precisa adivinhar a fatoração: já escreva (x − a) em cima e embaixo e ache o segundo fator dividindo o termo independente por (−a).",
+    caution: "Só cancele (x − a) depois de escrito como fator multiplicativo. Nunca cancele parcelas soltas."
+  };
 })(window);

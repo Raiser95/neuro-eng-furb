@@ -355,4 +355,78 @@
       `Não verificar o resultado. Sempre faça o teste de perpendicularidade com dois produtos escalares: um zero que falha denuncia um erro de sinal.`
     ]
   };
+
+  /* ================ MACETES OPERACIONAIS (SEMANAS 9 A 11) ================ */
+  T[33].shortcut = {
+    title: "Troca Direta π = 180° & Ângulo de Referência com o Eixo Horizontal",
+    rule: "Rad → Graus: substitua π por 180°   |   Graus → Rad: simplifique (graus / 180)\nrpm → Hz: divida por 60 (f = rpm / 60)   ⇒   ω = 2π·f",
+    when: "Para converter 5π/6 rad em graus sem regra de três: troque π por 180° → 5 × (180°/6) = 5 × 30° = 150°.",
+    caution: "Ao reduzir um ângulo ao 1º quadrante, meça SEMPRE a distância até o eixo horizontal (180° ou 360°), nunca até 90° ou 270°."
+  };
+  T[34].shortcut = {
+    title: "Os 4 Quartos do Período Senoidal & Conversão Rápida RMS ↔ Pico",
+    rule: "t = 0 → 0  |  t = T/4 → +V_p  |  t = T/2 → 0  |  t = 3T/4 → −V_p\nV_p = V_rms · √2 ≈ 1,4142 · V_rms   (127 V_rms → 180 V_p  |  220 V_rms → 311 V_p)",
+    when: "Quando o instante pedido t é 1/4, 1/2 ou 3/4 do período T, o seno vale exatamente +1, 0 ou −1, dispensando calculadora.",
+    caution: "Dentro de sen(ωt), divida o coeficiente de t por 2π para obter a frequência f em Hz (ex.: sen(100π·t) ⇒ f = 50 Hz, não 100 Hz!)."
+  };
+  T[35].shortcut = {
+    title: "Arco Duplo a partir da Terna & Decomposição em 45° ± 30°",
+    rule: "sen(2θ) = 2·(oposto · adjacente) / hipotenusa²\n75° = 45° + 30°   |   15° = 45° − 30°   (resultado é sempre (√6 ± √2)/4)",
+    when: "Para sen(75°) e cos(15°) o resultado é (√6 + √2)/4 ≈ 0,9659; para cos(75°) e sen(15°) é (√6 − √2)/4 ≈ 0,2588.",
+    caution: "Na fórmula de cos(a + b) o sinal do meio INVERTE (cos a·cos b − sen a·sen b), enquanto em sen(a + b) o sinal se mantém (+)."
+  };
+  T[36].shortcut = {
+    title: "Soma de 2 Fasores de Mesma Amplitude (60°, 90° e 120°)",
+    rule: "Se V₁ = V₂ = V:   Δφ = 60° ⇒ V_res = V·√3   |   Δφ = 90° ⇒ V_res = V·√2   |   Δφ = 120° ⇒ V_res = V",
+    when: "Em sistemas trifásicos e soma de sinais de mesma amplitude V: defasados de 120° a soma tem a MESMA amplitude V; defasados de 60° dá V√3.",
+    caution: "Na Lei dos Cossenos para um triângulo fechado o termo é −2ab·cos θ, mas na regra do paralelogramo para SOMAR dois fasores com diferença de fase Δφ o termo é +2V₁V₂·cos(Δφ)."
+  };
+  T[37].shortcut = {
+    title: "Distância 2D por Terna de Δx e Δy",
+    rule: "d = √(Δx² + Δy²)   |   M = ( (x₁+x₂)/2 , (y₁+y₂)/2 )",
+    when: "Calcule primeiro |Δx| e |Δy|: se formarem (3,4), (5,12), (6,8) ou (8,15), a distância é imediatamente 5, 13, 10 ou 17 sem elevar ao quadrado.",
+    caution: "No ponto médio você SOMA as coordenadas e divide por 2; na distância você SUBTRAI as coordenadas."
+  };
+  T[38].shortcut = {
+    title: "Perpendicular = Inverte e Troca o Sinal",
+    rule: "Se m₁ = p / q  ⇒  m₂(⊥) = −q / p   |   d(P₀, reta) = |ax₀ + by₀ + c| / √(a² + b²)",
+    when: "Para obter o coeficiente angular perpendicular a uma fração p/q, vire a fração de cabeça para baixo e troque o sinal em 1 segundo.",
+    caution: "Para aplicar a fórmula da distância ponto-reta, TODOS os termos da reta devem estar do mesmo lado igualados a zero (ax + by + c = 0)."
+  };
+  T[39].shortcut = {
+    title: "Centro da Circunferência por Divisão por −2",
+    rule: "Em x² + y² + Dx + Ey + F = 0:   x_c = −D / 2,   y_c = −E / 2,   R = √(x_c² + y_c² − F)",
+    when: "Em vez de completar quadrados passo a passo, divida os coeficientes de x e de y por −2 para achar o centro (x_c, y_c) imediatamente e calcule R² = x_c² + y_c² − F.",
+    caution: "Esse atalho exige que os coeficientes de x² e y² sejam iguais a 1 (se forem 2x² + 2y², divida a equação inteira por 2 primeiro)."
+  };
+  T[40].shortcut = {
+    title: "Leitura Instantânea de Fasores nos Eixos e Bissetrizes",
+    rule: "(±a, 0) ⇒ a∠0° ou a∠180°   |   (0, ±a) ⇒ a∠±90°   |   (a, ±a) ⇒ a√2 ∠ ±45°",
+    when: "Quando as partes real e imaginária têm módulos iguais (|x| = |y| = k), o módulo polar é sempre k√2 e o ângulo é ±45° ou ±135° conforme o quadrante.",
+    caution: "Se a parte real x for negativa, o fasor está no 2º ou 3º quadrante (ângulo entre 90° e 180° ou entre −90° e −180°)."
+  };
+  T[41].shortcut = {
+    title: "Versor Direto pela Terna Pitagórica",
+    rule: "Se u = (±3k, ±4k) ⇒ |u| = 5|k|  e  û = (±3/5, ±4/5) = (±0,6 ; ±0,8)",
+    when: "Qualquer vetor múltiplo de (3, 4) tem versor com componentes ±0,6 e ±0,8; qualquer múltiplo de (5, 12) tem versor com ±5/13 e ±12/13.",
+    caution: "A soma das componentes de um versor não é 1: o que vale 1 é a soma dos QUADRADOS das componentes (ûₓ² + ûᵧ² = 1)."
+  };
+  T[42].shortcut = {
+    title: "Ponta Menos Origem (AB = B − A) & Quádruplas Pitagóricas 3D",
+    rule: "AB = B − A   |   Ternas 3D inteiras: (1, 2, 2 → 3), (2, 3, 6 → 7), (1, 4, 8 → 9), (3, 4, 12 → 13)",
+    when: "Reconhecer as combinações 3D (1,2,2), (2,3,6), (1,4,8) e (3,4,12) dá o módulo |v| inteiro de imediato.",
+    caution: "No vetor AB, subtraia sempre o ponto final B menos o inicial A (nunca A − B, que aponta no sentido oposto)."
+  };
+  T[43].shortcut = {
+    title: "Teste de Ortogonalidade em 1 Linha (u · v = 0)",
+    rule: "u ⊥ v  ⇔  uₓvₓ + uᵧvᵧ + u_zv_z = 0",
+    when: "Para achar um parâmetro k que torna dois vetores perpendiculares, nem calcule os módulos: iguale a soma dos produtos das componentes a zero.",
+    caution: "O produto escalar retorna um NÚMERO (escalar, ex.: Trabalho W em joules), jamais um vetor com três coordenadas."
+  };
+  T[44].shortcut = {
+    title: "Ciclo Circular (y-z, z-x, x-y) no Produto Vetorial Sem Sinais Invertidos",
+    rule: "(u × v)_x = uᵧv_z − u_zvᵧ   |   (u × v)_y = u_zvₓ − uₓv_z   |   (u × v)_z = uₓvᵧ − uᵧvₓ",
+    when: "Se você escrever a componente y na ordem cíclica (u_z·v_x − u_x·v_z), o sinal negativo da componente j já fica embutido automaticamente!",
+    caution: "Ao terminar u × v, faça sempre o produto escalar mental de (u × v) com u: se não der 0, houve erro de sinal em uma das três componentes."
+  };
 })(window);

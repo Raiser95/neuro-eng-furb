@@ -252,6 +252,7 @@
 
   /* ============================== famílias ============================== */
   const FAMILIES = {};
+  const SHORTCUTS = {};
   const BANKS = {};
 
   const Q = {
@@ -262,6 +263,7 @@
   };
 
   function defineFamily(id, level, fn) { FAMILIES[id] = { id: id, level: level, fn: fn }; }
+  function defineShortcut(id, fn) { SHORTCUTS[id] = fn; }
   function setBank(sessionId, ids) { BANKS[sessionId] = ids; }
 
   function make(famId, seed) {
@@ -269,6 +271,9 @@
     if (!f) return null;
     const q = f.fn(makeRng(seed));
     q.family = famId; q.level = f.level; q.seed = seed;
+    if (!q.shortcut && SHORTCUTS[famId]) {
+      q.shortcut = SHORTCUTS[famId](q);
+    }
     return q;
   }
 
@@ -309,11 +314,21 @@
     const ex = T.example ? '<div class="worked"><h5>' + T.example.title + '</h5>' +
       T.example.lines.map(function (l) { return '<div class="worked-line mono">' + l + '</div>'; }).join("") + '</div>' : "";
     const traps = T.traps.map(function (t) { return '<li>' + t + '</li>'; }).join("");
+    const sc = T.shortcut
+      ? '<section class="theory-block tb-shortcut">' +
+        '<h4><span class="tb-tag mono">D</span> Macete Rápido (Atalho Condicional): ' + esc(T.shortcut.title) + '</h4>' +
+        '<div class="sc-rule mono">' + esc(T.shortcut.rule).replace(/\n/g, "<br>") + '</div>' +
+        '<div class="sc-meta-grid">' +
+        '<div class="sc-box"><span class="sc-label mono">Quando Funciona (Condição de Uso)</span><p>' + esc(T.shortcut.when) + '</p></div>' +
+        '<div class="sc-box"><span class="sc-label mono">Quando Evitar / Controle Inibitório</span><p>' + esc(T.shortcut.caution) + '</p></div>' +
+        '</div></section>'
+      : "";
     return '<div class="theory">' +
       '<h3 class="theory-title">Apostila Direta ao Ponto <span class="muted">(Teoria &amp; Engenharia)</span></h3>' +
       '<section class="theory-block tb-logic"><h4><span class="tb-tag mono">A</span> A Lógica Estrutural</h4><div class="prose">' + T.logic + '</div></section>' +
-      '<section class="theory-block tb-algo"><h4><span class="tb-tag mono">B</span> Algoritmo Passo a Passo</h4><ol class="recipe">' + algo + '</ol>' + ex + '</section>' +
+      '<section class="theory-block tb-algo"><h4><span class="tb-tag mono">B</span> Algoritmo Passo a Passo (Caminho Completo)</h4><ol class="recipe">' + algo + '</ol>' + ex + '</section>' +
       '<section class="theory-block tb-traps"><h4><span class="tb-tag mono">C</span> Armadilhas Clássicas de TDAH / Controle Inibitório</h4><ul class="trap-list">' + traps + '</ul></section>' +
+      sc +
       '</div>';
   }
 
@@ -399,13 +414,23 @@
     function solutionHTML(q, count) {
       const total = q.steps.length;
       const n = count == null ? total : Math.min(count, total);
-      let h = '<ol class="reveal">' + q.steps.slice(0, n).map(function (s, i) {
-        return '<li><span class="step-n mono">Passo ' + (i + 1) + '</span><span>' + s + '</span></li>';
-      }).join("") + '</ol>';
+      let h = '<div class="sol-path-label mono">Caminho Padrão · Passo a Passo Completo</div>' +
+        '<ol class="reveal">' + q.steps.slice(0, n).map(function (s, i) {
+          return '<li><span class="step-n mono">Passo ' + (i + 1) + '</span><span>' + s + '</span></li>';
+        }).join("") + '</ol>';
       if (n < total) {
         h += '<div class="row"><button type="button" class="btn small-btn" id="bn-next">Revelar próximo passo ▸</button>' +
           '<button type="button" class="btn ghost small-btn" id="bn-all">Mostrar tudo</button></div>';
       } else {
+        if (q.shortcut) {
+          h += '<div class="sol-shortcut">' +
+            '<div class="sol-sc-head"><span class="sc-badge mono">Macete Rápido · Atalho Condicional</span><strong>' + esc(q.shortcut.title) + '</strong></div>' +
+            '<div class="sc-applied mono">' + q.shortcut.applied + '</div>' +
+            '<div class="sc-meta-grid">' +
+            '<div class="sc-box"><span class="sc-label mono">Quando Funciona</span><p>' + esc(q.shortcut.when) + '</p></div>' +
+            '<div class="sc-box"><span class="sc-label mono">Quando Evitar / Cuidado TDAH</span><p>' + esc(q.shortcut.caution) + '</p></div>' +
+            '</div></div>';
+        }
         h += '<div class="final-result"><span class="small muted">Resultado Final</span><span class="mono">' + answerHTML(q) + '</span></div>';
       }
       return h;
@@ -521,9 +546,9 @@
   NE.CE = {
     makeRng: makeRng, rat: rat, ratAdd: ratAdd, ratMul: ratMul, ratDiv: ratDiv, ratStr: ratStr,
     fmt: fmt, evalExpr: evalExpr, parseList: parseList, check: check, answerHTML: answerHTML,
-    Q: Q, defineFamily: defineFamily, setBank: setBank, make: make, fixedSet: fixedSet, generate: generate,
+    Q: Q, defineFamily: defineFamily, defineShortcut: defineShortcut, setBank: setBank, make: make, fixedSet: fixedSet, generate: generate,
     renderTheory: renderTheory, mountBench: mountBench, practiceTotals: practiceTotals,
-    families: FAMILIES, banks: BANKS, LEVEL_LABEL: LEVEL_LABEL
+    families: FAMILIES, shortcuts: SHORTCUTS, banks: BANKS, LEVEL_LABEL: LEVEL_LABEL
   };
 })(window);
 

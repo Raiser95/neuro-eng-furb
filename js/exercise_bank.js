@@ -1689,6 +1689,229 @@
   B(54, ["derivPoly", "derivDef", "prodRule", "quotRule", "tangentLine"]);
   B(55, ["derivPoly", "chainRule", "prodRule", "quotRule", "capCurrent"]);
   B(56, ["kinDeriv", "derivPoly", "chainRule", "capCurrent", "indVolt"]);
+
+  /* ================== MACETES OPERACIONAIS NAS RESOLUÇÕES =================
+     Fonte Única de Verdade: todo atalho usa CE.answerHTML(q), ratStr(q) ou
+     fmt(q.value) extraído diretamente do objeto q já validado.
+     ======================================================================= */
+  const SC = CE.defineShortcut;
+  const ans = CE.answerHTML;
+
+  function registerAllShortcuts(ids, title, ruleFn, when, caution) {
+    ids.forEach(function (id) {
+      SC(id, function (q) {
+        return {
+          title: title,
+          applied: ruleFn(q) + " ⇒ " + b(ans(q)),
+          when: when,
+          caution: caution
+        };
+      });
+    });
+  }
+
+  // Semana 1 — Frações, Borboleta, Sinais e Resistores em Paralelo
+  SC("fracAdd", function (q) {
+    const m = /(\d+)\/(\d+)\s*\+\s*(\d+)\/(\d+)/.exec(q.text);
+    const body = m
+      ? "Borboleta: (" + m[1] + "·" + m[4] + " + " + m[2] + "·" + m[3] + ")/(" + m[2] + "·" + m[4] + ") = " + ((+m[1]) * (+m[4]) + (+m[2]) * (+m[3])) + "/" + ((+m[2]) * (+m[4])) + " = " + b(ratStr(q))
+      : "a/b + c/d = (a·d + b·c)/(b·d) = " + b(ratStr(q));
+    return {
+      title: "Método da Borboleta (Produto Cruzado Sem MMC)",
+      applied: body,
+      when: "Use quando somar ou subtrair apenas 2 frações de denominadores pequenos: multiplica cruzado no numerador e multiplica reto os denominadores.",
+      caution: "Não use para 3 ou mais frações (o denominador cresce demais) e NUNCA esqueça de simplificar a fração resultante pelo MDC no final."
+    };
+  });
+
+  SC("fracAddLcm", function (q) {
+    const m = /(\d+)\/(\d+)\s*\+\s*(\d+)\/(\d+)/.exec(q.text);
+    const body = m
+      ? "Borboleta + simplificação por MDC: (" + m[1] + "·" + m[4] + " + " + m[2] + "·" + m[3] + ")/(" + m[2] + "·" + m[4] + ") = " + ((+m[1]) * (+m[4]) + (+m[2]) * (+m[3])) + "/" + ((+m[2]) * (+m[4])) + " → " + b(ratStr(q))
+      : "a/b + c/d = (a·d + b·c)/(b·d) → " + b(ratStr(q));
+    return {
+      title: "Alternativa: Produto Cruzado + Simplificação Final",
+      applied: body,
+      when: "Útil se você travar na fatoração do MMC de 2 frações: multiplique cruzado e simplifique no fim.",
+      caution: "Como os denominadores têm fator comum, o produto b·d é maior que o MMC — a simplificação final pelo MDC é obrigatória."
+    };
+  });
+
+  SC("parallel2", function (q) {
+    const m = /R₁\s*=\s*(\d+)\s*Ω\s*e\s*R₂\s*=\s*(\d+)/.exec(q.text);
+    const R1 = m ? +m[1] : 0, R2 = m ? +m[2] : 0;
+    const body = (R1 && R2)
+      ? "Atalho Produto/Soma: Req = (R₁ · R₂)/(R₁ + R₂) = (" + R1 + " × " + R2 + ")/(" + R1 + " + " + R2 + ") = " + (R1 * R2) + "/" + (R1 + R2) + " = " + b(ans(q))
+      : "Atalho Produto/Soma: Req = (R₁ · R₂)/(R₁ + R₂) = " + b(ans(q));
+    return {
+      title: "Atalho Produto pela Soma (Exclusivo para 2 Resistores)",
+      applied: body,
+      when: "Use sempre que houver EXATAMENTE 2 resistores em paralelo: entrega Req direto sem precisar tirar MMC e sem risco de esquecer de inverter 1/Req.",
+      caution: "JAMAIS aplique (R₁·R₂·R₃)/(R₁+R₂+R₃) para 3 ou mais resistores! Para 3 resistores, some as condutâncias 1/R via MMC ou aplique o produto pela soma de 2 em 2."
+    };
+  });
+
+  SC("parallel3", function (q) {
+    return {
+      title: "Associação em Cascata 2 a 2 (Resistores Iguais ou Múltiplos)",
+      applied: "Calcule primeiro o par mais simples R_a = (R₁·R₂)/(R₁+R₂) e depois faça (R_a·R₃)/(R_a+R₃) ⇒ " + b(ans(q)),
+      when: "Quando dois dos três resistores são iguais (R‖R = R/2) ou múltiplos fáceis (ex.: 6‖12 = 4 Ω), reduza o par de cabeça e combine com o terceiro!",
+      caution: "Nunca faça (R₁·R₂·R₃)/(R₁+R₂+R₃) de uma vez só (dimensionalmente errado: daria Ω³ / Ω = Ω²)."
+    };
+  });
+
+  registerAllShortcuts(
+    ["signs1", "signDistrib", "signFrac"],
+    "Regra da Paridade de Sinais Negativos",
+    function () { return "Conte os sinais (−) no produto/divisão: par ⇒ (+) | ímpar ⇒ (−)"; },
+    "Em multiplicações, divisões ou remoção de parênteses −(a − b), defina o sinal global primeiro antes de operar os números.",
+    "A regra 'menos com menos dá mais' só vale para produto, divisão e sinal antes de parêntese — nunca em soma de dívidas (−3 − 5 = −8)."
+  );
+
+  registerAllShortcuts(
+    ["voltDiv", "dividerDesign"],
+    "Proporção Direta de Tensão nos Resistores em Série",
+    function () { return "Razão de tensões = Razão de resistências: V₂ / V₁ = R₂ / R₁  e  V₂ = Vin · [R₂ / (R₁ + R₂)]"; },
+    "Se R₂ é k vezes R₁, a tensão se divide em (1 + k) partes iguais e R₂ fica com k partes.",
+    "Confira sempre se o resistor no numerador é aquele sobre o qual o enunciado pediu a tensão (R₂, e não R₁)."
+  );
+
+  // Semana 2 — Potências, Prefixos, Radicais e Coulomb
+  registerAllShortcuts(
+    ["powRules", "powNeg", "powOfPow", "powTen"],
+    "Elevador de Expoente & Separação Mantissa × Base 10",
+    function () { return "Mesma base: produto soma expoentes (m + n), divisão subtrai (m − n), potência multiplica (m·n)"; },
+    "Trate os números da frente e as potências de 10 em duas colunas independentes.",
+    "Ao subtrair um expoente negativo no denominador, m − (−n) vira m + n (o expoente sobe trocando de sinal)."
+  );
+
+  registerAllShortcuts(
+    ["ohmPrefix", "ohm1", "tauRC"],
+    "Cancelamento Instantâneo de Prefixos Complementares",
+    function () { return "kΩ (10³) × mA (10⁻³) = V (10⁰)  |  V ÷ kΩ (10³) = mA (10⁻³)  |  kΩ (10³) × nF (10⁻⁹) = μs (10⁻⁶)"; },
+    "Use em circuitos eletrônicos para pular a escrita de zeros: quilo cancela com mili; quilo com nano dá micro (÷1000 = ms).",
+    "Só cancele k com m na MULTIPLICAÇÃO (V = R·I). Na divisão I = V/R, 10³ no denominador sobe como 10⁻³ (mA)."
+  );
+
+  registerAllShortcuts(
+    ["sqrtSimplify", "fracExp", "vrms"],
+    "Raiz Antes da Potência & Fator 0,7071 em RMS",
+    function () { return "Em a^(m/n), tire primeiro a raiz (ⁿ√a) e só depois eleve a m  |  Vrms = Vp / √2 ≈ 0,7071 · Vp"; },
+    "Extrair a raiz antes de elevar à potência m mantém os números pequenos e fáceis de calcular de cabeça.",
+    "Nunca aplique raiz termo a termo numa soma: √(a + b) ≠ √a + √b."
+  );
+
+  // Semana 3 — Binário, Hexa, Complemento de 2 e Boole
+  registerAllShortcuts(
+    ["bin2dec", "dec2bin", "nbits", "bin2hex", "twosComp"],
+    "Régua 128-64-32-16-8-4-2-1, Nibble 4-Bits & Complemento de 2 Rápido",
+    function () { return "Nibble Hex = 4 bits (8-4-2-1)  |  Compl. de 2: da direita p/ esquerda, copie até o 1º '1' e inverta o resto"; },
+    "Para binário ↔ hex, nunca passe pelo decimal: converta cada bloco de 4 bits direto para um dígito hex (0 a F).",
+    "Em complemento de 2, preencha os zeros à esquerda até completar os 8 bits antes de inverter."
+  );
+
+  registerAllShortcuts(
+    ["demorgan", "simplify"],
+    "Quebra a Barra e Troca o Operador (De Morgan) + Absorção",
+    function () { return "¬(A·B) = ¬A + ¬B  |  ¬(A+B) = ¬A·¬B  |  A + A·B = A  |  A + ¬A·B = A + B"; },
+    "Em expressões do tipo A·B + A·¬B, coloque A em evidência mentalmente: como B + ¬B = 1, sobra apenas A.",
+    "Não esqueça de inverter cada variável individualmente ao quebrar a barra de negação."
+  );
+
+  // Semana 4 — Produtos Notáveis, Fatoração, Polos e Limites 0/0
+  registerAllShortcuts(
+    ["expandSq", "diffSq", "expandNum", "diffQuot"],
+    "Diferença de Quadrados Mental & Quociente de Newton 2x + h",
+    function () { return "(a + b)(a − b) = a² − b²  |  [(x + h)² − x²]/h = 2x + h"; },
+    "Em [(x+h)² − x²]/h, o x² sempre cancela e o h divide 2xh + h², sobrando sempre 2x + h em 1 linha.",
+    "No quadrado de (x − a)², o último termo (+a²) é sempre positivo."
+  );
+
+  registerAllShortcuts(
+    ["quadRoots", "poles", "limFactor", "limCancel", "simpAlg1"],
+    "Soma e Produto (Girard) & Cancelamento Direto do Fator (x − a)",
+    function () { return "x² − Sx + P = (x − r₁)(x − r₂)  |  Em limite 0/0 com x→a, (x − a) sempre corta!"; },
+    "Se o denominador é (x − a) e o limite dá 0/0, um dos fatores do numerador é obrigatoriamente (x − a); ache o outro fator dividindo o termo independente c por (−a).",
+    "Em polos de sistemas estáveis (s² + bs + c = 0 com b, c > 0), as duas raízes são NEGATIVAS (sinais opostos aos dos parênteses)."
+  );
+
+  // Semana 5 — Isolamento, Inequações, Cramer e Malhas
+  registerAllShortcuts(
+    ["solveFormula", "ineqNeg", "absIneqCount"],
+    "Permuta Cruzada em 1 Passo & Contagem 2b − 1 no Módulo",
+    function () { return "Em P = V²/R ⇒ R = V²/P (trocam de lugar!)  |  Inteiros em |x − a| < b: exatamente 2b − 1"; },
+    "Quando a incógnita está sozinha dividindo todo o lado direito, ela troca de lugar direto com o lado esquerdo.",
+    "Ao dividir uma inequação por número negativo (−ax > c), inverta o sinal (<) no mesmo segundo."
+  );
+
+  registerAllShortcuts(
+    ["sys2a", "sys2c", "sys2cur", "meshSolve"],
+    "Média/Semidiferença em Sistemas Simétricos & Cramer 2×2",
+    function () { return "Em x+y=S e x−y=D ⇒ x = (S+D)/2 e y = (S−D)/2  |  Cramer: x = Dx/D, y = Dy/D"; },
+    "Para sistemas 2×2, calcular os 3 determinantes (D, Dx, Dy) evita trabalhar com frações no meio do caminho.",
+    "Organize sempre as incógnitas na mesma ordem de coluna (x depois y, ou I₁ depois I₂) antes de calcular o determinante."
+  );
+
+  // Semana 6 — Vértice, Lançamento e Máxima Transferência de Potência
+  registerAllShortcuts(
+    ["vertexX", "vertexY", "projectile", "maxPowerI", "maxPowerP", "pmaxDesign"],
+    "Ponto Crítico pelo Vértice (Sem Derivar) & Casamento RL = Rs",
+    function () { return "x_v = −b/(2a)  |  h_máx = v₀²/20 (p/ g=10)  |  Potência Máxima: RL = Rs ⇒ Iv = V/(2Rs) e Pmáx = V²/(4Rs)"; },
+    "Qualquer função quadrática atinge seu extremo exatamente em −b/(2a). Em circuitos, Pmáx na carga é diretamente V²/(4·Rs).",
+    "Não esqueça o fator 4 no denominador de Pmáx = V²/(4·Rs) (pois a tensão na carga casada é metade da tensão da fonte: V/2)."
+  );
+
+  // Semana 7 — Exponenciais, Logaritmos, Decibéis e RC
+  registerAllShortcuts(
+    ["halfLife", "expGrowth", "logCombo", "logChange", "dbPower", "dbVolt", "dbCascade", "rcTimeTo"],
+    "Razão de Expoentes no Log, Regra 10 vs. 20 em dB & Tempo RC por ln",
+    function () { return "log_(pᵐ)(pⁿ) = n/m  |  Potência: 10·k dB  |  Tensão: 20·k dB  |  Tempo RC: t = −τ·ln(fração restante)"; },
+    "Em dB, basta olhar o expoente k da potência de 10 (10ᵏ) e multiplicar por 10 (potência) ou por 20 (tensão). Em cascata, basta somar os ganhos em dB.",
+    "Em t = −τ·ln(1 − P%), coloque dentro do ln o que FALTA para 100% (ex.: para 80% de carga, resta 0,20)."
+  );
+
+  // Semana 8 e 9 — Pitágoras, Trigonometria, Forças, Potência CA e Senoides
+  registerAllShortcuts(
+    ["pythHyp", "pythLeg", "cableGuy", "trigId", "powerTriangle", "dist2d"],
+    "Reconhecimento de Ternas Pitagóricas (3-4-5, 5-12-13, 8-15-17, 7-24-25)",
+    function () { return "Simplifique os lados pelo MDC k e aplique a terna base multiplicada por k"; },
+    "Reconhecer que (6, 8, 10), (9, 12, 15) e (1200, 900, 1500) são múltiplos de (3, 4, 5) entrega a hipotenusa e o fator de potência cos φ de cabeça.",
+    "Confirme sempre quem é a hipotenusa (o maior lado, S em VA ou o comprimento do cabo)."
+  );
+
+  registerAllShortcuts(
+    ["degToRad", "radToDeg", "unitCircle", "sinParams", "rmsPeak", "doubleAngle"],
+    "Substituição Direta π = 180° & Leitura Instantânea de ω = 2πf",
+    function () { return "π rad = 180°  |  Em sen(2π·f·t), f é o fator que multiplica 2πt e T(ms) = 1000/f"; },
+    "Para passar de radianos para graus, troque o símbolo π por 180° e simplifique a divisão antes de multiplicar.",
+    "Cuidado com o sinal do quadrante no círculo trigonométrico: no 2º quadrante o seno é (+), mas o cosseno e a tangente são (−)."
+  );
+
+  // Semana 10 e 11 — Geometria Analítica e Vetores 2D/3D
+  registerAllShortcuts(
+    ["perpSlope", "circleFromEq", "completeSquareCircle", "vec3Norm", "orthoK", "cross3"],
+    "Inversão de Perpendicular, Centro por (−D/2, −E/2) & Ortogonalidade u·v = 0",
+    function () { return "m₂(⊥) = −1/m₁  |  Centro: metade com sinal trocado  |  u ⊥ v ⇔ ux·vx + uy·vy + uz·vz = 0"; },
+    "Na equação geral da circunferência x² + y² + Dx + Ey + F = 0, o centro é imediatamente (−D/2, −E/2) e R = √(xc² + yc² − F).",
+    "No produto vetorial u × v, a componente do meio (y / j) tem sinal invertido: −(ux·vz − uz·vx)."
+  );
+
+  // Semana 12, 13 e 14 — Pré-Cálculo, Limites e Derivadas
+  registerAllShortcuts(
+    ["invFn", "polyDivRem", "partialFrac", "limConj", "limInf", "limTrig", "rcSteady"],
+    "Teorema do Resto P(r), Método do Tapa (Heaviside) & Coeficientes Líderes",
+    function () { return "Resto = P(r)  |  lim_(x→∞) = a/b  |  lim_(x→0) sen(ax)/(bx) = a/b  |  lim_(x→a²) (√x−a)/(x−a²) = 1/(2a)"; },
+    "Em limites no infinito de mesmo grau ou em sen(ax)/(bx) com x→0, a resposta é diretamente a razão a/b dos coeficientes.",
+    "Esses atalhos exigem verificar a condição: x → ∞ para razão de líderes e x → 0 (em radianos) para sen(ax)/(bx)."
+  );
+
+  registerAllShortcuts(
+    ["derivDef", "derivPoly", "quotRule", "chainRule", "kinDeriv", "capCurrent", "indVolt"],
+    "Regra do Tombo Direta, Homográfica a/(x+a)² & Cadeia Linear",
+    function () { return "(xⁿ)' = n·xⁿ⁻¹  |  [x/(x+a)]' = a/(x+a)²  |  [(ax+b)ⁿ]' = n·a·(ax+b)ⁿ⁻¹  |  i_C(0) = C·Vp·ω"; },
+    "Para f(x) = ax² + bx + c, a derivada em x₀ é imediatamente 2a·x₀ + b (sem precisar abrir o limite com h→0).",
+    "Na regra da cadeia, jamais esqueça de multiplicar pela derivada da função interna (o coeficiente 'a' ou a frequência angular 'ω')."
+  );
 })(window);
 
 

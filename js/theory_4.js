@@ -370,4 +370,78 @@
       `Esquecer a conversão de mH para H em v = L·di/dt e errar por um fator 1000. Contramedida: converta as unidades na primeira linha (2 mH = 2×10⁻³ H) e escreva a unidade final do resultado.`
     ]
   };
+
+  /* ================ MACETES OPERACIONAIS (SEMANAS 12 A 14) ================ */
+  T[45].shortcut = {
+    title: "Checklist das 3 Restrições de Domínio Real",
+    rule: "1) Denominador ≠ 0   |   2) Radicando par ≥ 0   |   3) Raiz par NO denominador > 0 (estrito!)",
+    when: "Para √(ax + b), a fronteira do domínio é imediatamente a raiz x = −b/a (para a > 0, o domínio começa em −b/a).",
+    caution: "Se a raiz quadrada estiver no DENOMINADOR (1/√(ax+b)), o zero também fica proibido: a condição passa de ≥ 0 para estritamente > 0."
+  };
+  T[46].shortcut = {
+    title: "Inversa Numérica Sem Achar a Fórmula de f⁻¹(x)",
+    rule: "Pediu f⁻¹(y₀)?  Resolva diretamente f(x) = y₀!",
+    when: "Quando a questão pede f⁻¹ de um número específico y₀ (ou a temperatura correspondente a uma leitura de tensão do sensor), não perca tempo isolando a expressão algébrica geral: iguale a função ao número y₀ e ache x.",
+    caution: "Na função composta f(g(x₀)), nunca distribua f como se fosse multiplicação: avalie primeiro o número k = g(x₀) e depois calcule f(k)."
+  };
+  T[47].shortcut = {
+    title: "Teorema do Resto em 1 Linha & Soma dos Coeficientes",
+    rule: "Resto de P(x) ÷ (x − r) = P(r)   |   Se a soma dos coeficientes de P(x) é 0, então x = 1 é RAIZ!\nEm x³ + bx² + cx + d = 0 com raiz conhecida r₁:  r₂ + r₃ = −b − r₁   e   r₂ · r₃ = −d / r₁",
+    when: "Para achar o resto da divisão por (x − r), jamais monte a chave da divisão longa: apenas substitua x = r no polinômio. E se já conhece uma raiz r₁ de um polinômio mônico de 3º grau, a soma e o produto das outras duas saem direto por Girard!",
+    caution: "Olhe o sinal do divisor: na divisão por (x + 2), você deve substituir x = −2 (a raiz do divisor), não +2."
+  };
+  T[48].shortcut = {
+    title: "Método do Tapa (Cover-Up de Heaviside) para Frações Parciais",
+    rule: "Em N(s) / [(s − p)(s − q)] = A/(s − p) + B/(s − q):\nA = N(p) / (p − q)   e   B = N(q) / (q − p)",
+    when: "Para achar A, 'tape' o fator (s − p) no denominador original e substitua s = p no que sobrou. Você encontra A e B em 10 segundos sem montar sistema linear!",
+    caution: "O Método do Tapa direto vale para polos simples (grau 1 sem repetição) e frações próprias (grau do numerador menor que o do denominador)."
+  };
+  T[49].shortcut = {
+    title: "Quociente de Diferenças Quadrático Direto",
+    rule: "lim_(x→a) (x² − a²)/(x − a) = 2a   |   [(x + h)² − x²]/h = 2x + h",
+    when: "Sempre que o limite em x → a tiver (x − a) no denominador e der 0/0, fatore (x − a) no numerador e cancele antes de substituir.",
+    caution: "Se a substituição direta NÃO der 0/0 (ex.: der 5/0 ou 0/5), não fatore: 0/5 vale 0 imediatamente, e 5/0 tende a ±∞."
+  };
+  T[50].shortcut = {
+    title: "Atalho da Diferença de Quadrados na Raiz (Sem Multiplicar Conjugado)",
+    rule: "x − a² = (√x − a)(√x + a)  ⇒  (√x − a)/(x − a²) = 1 / (√x + a)  →  1 / (2a)",
+    when: "Em lim_(x→a²) (√x − a)/(x − a²), enxergue o denominador (x − a²) diretamente como a diferença de quadrados (√x − a)(√x + a): corta (√x − a) em 1 linha e o resultado é sempre 1/(2a)!",
+    caution: "Substitua x = a² dentro de √x ao final (√(a²) = a, logo 1/(a + a) = 1/(2a), e não 1/(2a²))."
+  };
+  T[51].shortcut = {
+    title: "Regra dos Coeficientes Líderes no Infinito & Capacitor em t=0⁺ vs. t→∞",
+    rule: "lim_(x→∞) (a·xⁿ + …)/(b·xᵐ + …)  =  a/b (se n = m)  |  0 (se n < m)  |  ±∞ (se n > m)\nCircuito RC na carga:  t → 0⁺ ⇒ Capacitor = Curto (i = V_f/R)  |  t → ∞ ⇒ Capacitor = Aberto (v = V_f, i = 0)",
+    when: "Em limites para x → ∞ de razão de polinômios de mesmo grau, ignore todos os termos menores: a resposta é a fração a/b dos coeficientes de maior grau.",
+    caution: "Verifique se os polinômios estão ordenados pela maior potência antes de pegar os coeficientes líderes."
+  };
+  T[52].shortcut = {
+    title: "Razão Direta dos Coeficientes no Limite Trigonométrico Fundamental",
+    rule: "lim_(x→0) sen(a·x) / (b·x) = a / b   |   lim_(x→0) sen(a·x) / sen(b·x) = a / b",
+    when: "Quando x → 0, para ângulos muito pequenos em radianos vale a aproximação de pequenos ângulos sen(u) ≈ u e tg(u) ≈ u: assim sen(ax)/(bx) vira (ax)/(bx) = a/b instantaneamente.",
+    caution: "Esse atalho só vale quando o argumento tende a ZERO (x → 0) e o ângulo está em radianos."
+  };
+  T[53].shortcut = {
+    title: "Inclinação da Tangente de Parábola pela Regra do Tombo",
+    rule: "Para f(x) = a·x² + b·x + c:   m_tangente(x₀) = f'(x₀) = 2a·x₀ + b",
+    when: "Para achar a reta tangente y = m·x + n em x₀: calcule y₀ = f(x₀), a inclinação m = 2a·x₀ + b e o intercepto n = y₀ − m·x₀.",
+    caution: "Não confunda o valor da função no ponto f(x₀) com a inclinação f'(x₀): você precisa dos dois para montar a equação da reta tangente."
+  };
+  T[54].shortcut = {
+    title: "Atalho para Derivada de Homográfica x / (x + a)",
+    rule: "[ x / (x + a) ]' = a / (x + a)²   |   Polinômio: (c·xⁿ)' = (c·n)·xⁿ⁻¹ e (constante)' = 0",
+    when: "Para derivar x/(x + a), o numerador após (u'v − uv') sempre simplifica para a constante 'a', ficando simplesmente a/(x + a)².",
+    caution: "Na regra do quociente (u'v − uv')/v², comece SEMPRE derivando o numerador (u'·v primeiro). Inverter a ordem troca o sinal da derivada inteira."
+  };
+  T[55].shortcut = {
+    title: "Regra da Cadeia Linear: Deriva Fora e Multiplica pelo Coeficiente de Dentro",
+    rule: "[ (a·x + b)ⁿ ]' = n·a · (a·x + b)ⁿ⁻¹   |   [ sen(ω·t) ]' = ω · cos(ω·t)\nEm capacitor com v(t) = V_p·sen(ωt):  i(0) = C · V_p · ω",
+    when: "Quando a função interna é linear (ax + b ou ωt), basta derivar a função externa normalmente e multiplicar pela constante 'a' (ou ω).",
+    caution: "Esquecer de multiplicar pela derivada interna (o fator 'a' ou 'ω') é o erro mais comum em Cálculo I e em correntes capacitivas CA."
+  };
+  T[56].shortcut = {
+    title: "Escada Cinemática (s → v → a) e Indutor/Capacitor em 1 Linha",
+    rule: "s(t) = a·t³ + b·t² + c·t  ⇒  v(t) = 3a·t² + 2b·t + c  ⇒  a(t) = 6a·t + 2b\nv_L(t) = L · i'(t)   |   i_C(t) = C · v'(t)",
+    when: "Cada degrau para baixo na cinemática (posição → velocidade → aceleração) é um único 'tombo' do expoente.",
+    caution: "Em indutores e capacitores, converta mH (10⁻³ H) e mF/μF (10⁻³/10⁻⁶ F) na primeira linha antes de multiplicar pela derivada."
+  };
 })(window);

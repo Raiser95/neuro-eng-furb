@@ -383,7 +383,19 @@ blockquote { margin: 1rem 0 0; padding: .5rem .9rem; border-left: 2px solid var(
 .step-list { margin: .5rem 0 .75rem; padding: 0; list-style: none; display: grid; gap: .4rem; font-size: .84rem; }
 .step-list li { display: grid; grid-template-columns: 68px 1fr; gap: .55rem; padding: .45rem .65rem; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text-2); overflow-wrap: anywhere; }
 .step-n { color: var(--metal); font-size: .72rem; text-transform: uppercase; }
-.final-result { padding: .6rem .8rem; background: var(--bg); border: 1px solid var(--border-strong); border-radius: 8px; font-size: .88rem; color: var(--text); }
+.final-result { padding: .6rem .8rem; background: var(--bg); border: 1px solid var(--border-strong); border-radius: 8px; font-size: .88rem; color: var(--text); display: flex; justify-content: space-between; align-items: center; gap: .75rem; margin-top: .75rem; }
+
+/* ---------------- macetes operacionais (atalho condicional) --------------- */
+.tb-shortcut { border-color: var(--border-strong); background: var(--surface); }
+.sc-rule, .sc-applied { padding: .75rem .9rem; background: var(--bg); border: 1px solid var(--border-strong); border-radius: 8px; font-size: .85rem; color: var(--text); line-height: 1.55; margin: .55rem 0 .7rem; overflow-wrap: anywhere; }
+.sc-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+.sc-box { padding: .65rem .8rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; font-size: .83rem; }
+.sc-box p { margin: 0; color: var(--text-2); line-height: 1.52; }
+.sc-label { display: block; font-size: .67rem; color: var(--metal); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .3rem; }
+.sol-path-label { font-size: .7rem; color: var(--metal); text-transform: uppercase; letter-spacing: .08em; margin: .85rem 0 .25rem; }
+.sol-shortcut { margin: .85rem 0; padding: .9rem 1rem; background: var(--bg); border: 1px solid var(--border-strong); border-radius: 8px; }
+.sol-sc-head { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-bottom: .35rem; font-size: .9rem; color: var(--text); }
+.sc-badge { font-size: .68rem; color: var(--text-2); text-transform: uppercase; letter-spacing: .07em; padding: .12rem .5rem; border: 1px solid var(--border-strong); border-radius: 99px; background: var(--surface-2); }
 
 /* -------------------- fórmulas prontas & gaveta (FM) ---------------------- */
 .fm-toolbar { display: grid; gap: .9rem; margin-bottom: 1rem; }
@@ -468,7 +480,7 @@ body.fm-drawer-open { overflow: hidden; }
   /* 16px nos campos evita o zoom automático do Safari ao focar */
   input[type=text], input[type=number], textarea, select { font-size: 16px; }
 
-  .grid-2, .q-work, .fm-meta-grid { grid-template-columns: minmax(0, 1fr); }
+  .grid-2, .q-work, .fm-meta-grid, .sc-meta-grid { grid-template-columns: minmax(0, 1fr); }
   .recipe li, .step-list li, .fm-vars li { grid-template-columns: 1fr; gap: .2rem; }
   .cd-row .num { font-size: 2.1rem; }
   .week > summary { grid-template-columns: auto 1fr auto; }

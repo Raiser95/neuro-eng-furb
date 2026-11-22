@@ -490,4 +490,102 @@
       `Esquecer de multiplicar a massa por g (usar 20 em vez de 200 N) ou misturar W, var e VA. Contramedida: escreva a unidade ao lado de cada número e converta kg em N antes de decompor.`
     ]
   };
+
+  /* ================ MACETES OPERACIONAIS (SEMANAS 5 A 8) ================ */
+  T[17].shortcut = {
+    title: "Permuta em Cruz na Proporção & Projeto de Divisor por Razão",
+    rule: "Se A = B / C  ⇒  C = B / A   (A e C trocam de lugar em 1 passo!)\nNo divisor V_out = V_s·R₂/(R₁+R₂):  R₂ / R₁ = V_out / (V_s − V_out)",
+    when: "Em fórmulas como P = V²/R ou I = V/R, a incógnita no denominador troca de lugar diretamente com o termo isolado do outro lado. No divisor de tensão, a razão dos resistores é igual à razão das tensões em cada um.",
+    caution: "A permuta direta C = B/A só vale quando C divide o lado direito INTEIRO (sem parcelas somadas fora da fração)."
+  };
+  T[18].shortcut = {
+    title: "Tradução Geométrica do Módulo como Distância",
+    rule: "|x − a| < b  ⇔  distância de x até a é menor que b  ⇔  a − b < x < a + b\nQuantidade de inteiros estritamente dentro de (a − b, a + b) com a, b ∈ ℤ:  2b − 1",
+    when: "Em vez de abrir dois casos separados para |x − a| < b, marque o centro 'a' e abra um raio 'b' para cada lado. Se a e b forem inteiros, há exatamente 2b − 1 inteiros estritamente dentro do intervalo.",
+    caution: "Se o coeficiente de x for negativo (ex.: −3x > 12), prefira passar o termo −3x somando para o outro lado (0 > 12 + 3x) ou inverta o sinal da desigualdade na mesma hora."
+  };
+  T[19].shortcut = {
+    title: "Soma/Subtração Direta Simétrica & Cramer 2×2 Mental",
+    rule: "Se x + y = S e x − y = D  ⇒  x = (S + D)/2  e  y = (S − D)/2",
+    when: "Sempre que os coeficientes de uma incógnita já forem iguais ou opostos (+y e −y), some ou subtraia as duas linhas verticalmente em 1 passo.",
+    caution: "Ao subtrair a 2ª equação da 1ª, troque o sinal de TODOS os termos da 2ª equação (inclusive o termo independente à direita do =)."
+  };
+  T[20].shortcut = {
+    title: "Inspeção de Simetria de Malha por Matriz de Impedância",
+    rule: "Malha 1: +(R_próprios 1)·I₁ − (R_comum)·I₂ = V₁\nMalha 2: −(R_comum)·I₁ + (R_próprios 2)·I₂ = V₂",
+    when: "Quando todas as correntes de malha são arbitradas no mesmo sentido (horário), a diagonal principal é sempre a soma positiva dos resistores daquela malha e os termos cruzados são sempre negativos (−R_compartilhado).",
+    caution: "Se uma fonte estiver empurrando corrente contra o sentido horário arbitrado na malha, ela entra com sinal NEGATIVO no lado direito."
+  };
+  T[21].shortcut = {
+    title: "Leitura Direta da Inclinação (V/mA = kΩ) e Raiz Mental",
+    rule: "Em f(x) = a·x + b:  Raiz x = −b / a   |   Em gráficos V(V) × I(mA):  R(kΩ) = ΔV / ΔI",
+    when: "Para achar onde a reta corta o eixo horizontal, basta fazer −(termo independente)/(coeficiente de x). Em curvas de resistores, dividir volts por miliampères já entrega o resultado diretamente em quilo-ohms (kΩ).",
+    caution: "Confira se os dois pontos foram lidos na mesma ordem: (y₂ − y₁)/(x₂ − x₁). Inverter a ordem só no numerador inverte o sinal da inclinação."
+  };
+  T[22].shortcut = {
+    title: "Vértice por Média das Raízes & Tempo de Subida no Lançamento",
+    rule: "x_v = (x₁ + x₂) / 2 = −b / (2a)   |   Em h(t) = v₀t − 5t²:  t_subida = v₀ / 10  e  h_máx = v₀² / 20",
+    when: "Se você já conhece as duas raízes da parábola, o vértice fica exatamente no meio delas. Em lançamentos com g = 10 m/s², o tempo até o topo é simplesmente v₀/10.",
+    caution: "Ao calcular Δ = b² − 4ac com b negativo, b² é SEMPRE positivo; o único sinal que pode mudar no Δ vem do produto −4·a·c."
+  };
+  T[23].shortcut = {
+    title: "Regra MA-CA-MA no Estudo do Sinal da Parábola",
+    rule: "Fora das raízes: Mesmo sinal de 'a' (MA)   |   Entre as raízes: Contrário de 'a' (CA)\nNº de inteiros estritamente entre duas raízes inteiras r₁ < r₂:  (r₂ − r₁) − 1",
+    when: "Quando Δ > 0, não precisa testar pontos na parábola: entre as duas raízes o sinal é sempre o oposto do coeficiente 'a', e fora delas é sempre o mesmo de 'a'.",
+    caution: "Em inequações quociente f(x)/g(x) ≥ 0, as raízes do numerador entram (bolinha fechada), mas as raízes do DENOMINADOR jamais entram (bolinha aberta, pois zeram o denominador)."
+  };
+  T[24].shortcut = {
+    title: "Teorema da Máxima Transferência de Potência em 1 Linha",
+    rule: "R_L(ótimo) = R_s   ⇒   I_pmax = V_th / (2·R_s)   e   P_máx = V_th² / (4·R_s)",
+    when: "Sempre que uma fonte de tensão V com resistência interna R_s alimentar uma carga variável R_L, a potência na carga é máxima quando R_L = R_s (rendimento de 50%).",
+    caution: "Não confunda a potência total gerada pela fonte (V²/(2R_s)) com a potência máxima útil entregue à carga (V²/(4R_s), metade na carga e metade dissipada internamente)."
+  };
+  T[25].shortcut = {
+    title: "Contagem de Meias-Vidas / Dobras Sem Passar por Logaritmo",
+    rule: "n = t / T_ciclo   ⇒   N(t) = N₀ / 2ⁿ (meia-vida)   ou   P(d) = P₀ · 2ⁿ (dobra)",
+    when: "Quando o tempo total t é múltiplo inteiro do período de meia-vida ou de dobra T, basta dividir t/T = n e dividir (ou multiplicar) o valor inicial por 2ⁿ.",
+    caution: "Em equações do tipo 2^(2x) − S·2^x + P = 0, ache primeiro as raízes em u = 2^x e NÃO pare nelas: converta de volta u = 2^x ⇒ x = log₂(u)."
+  };
+  T[26].shortcut = {
+    title: "Regra do Tombo nos Dois Expoentes (Mudança de Base Instantânea)",
+    rule: "log_(pᵐ)(pⁿ) = n / m   |   log_b(A) − log_b(B) = log_b(A / B)",
+    when: "Quando a base e o logaritmando são potências do mesmo primo p (ex.: log₈(32) = log_(2³)(2⁵)), o resultado é imediatamente a razão dos expoentes 5/3.",
+    caution: "Antes de cancelar logs em uma subtração log(A) − log(B), junte-os em um único log do quociente log(A/B): muitas vezes A/B simplifica para uma potência exata da base!"
+  };
+  T[27].shortcut = {
+    title: "Tabela Mental de Decibéis (Ordens de 10 e Dobras)",
+    rule: "Potência (10·log): ×10 ⇒ +10 dB | ×100 ⇒ +20 dB | ×2 ⇒ +3 dB | ÷2 ⇒ −3 dB\nTensão   (20·log): ×10 ⇒ +20 dB | ×100 ⇒ +40 dB | ×2 ⇒ +6 dB | ÷10 ⇒ −20 dB",
+    when: "Para qualquer razão de potência 10ᵏ, o ganho é 10k dB; para qualquer razão de tensão 10ᵏ, o ganho é 20k dB — cálculo mental instantâneo.",
+    caution: "Confira no enunciado se a grandeza é Potência (W → usa 10) ou Tensão/Corrente (V/A → usa 20). É a armadilha nº 1 em provas de Circuitos e Telecomunicações."
+  };
+  T[28].shortcut = {
+    title: "Fórmula Direta do Tempo de Carga RC & Régua de Constantes τ",
+    rule: "t = −τ · ln(1 − %/100)   |   1τ ≈ 63,2%  ·  2τ ≈ 86,5%  ·  3τ ≈ 95,0%  ·  5τ ≈ 99,3%",
+    when: "Para descobrir em quanto tempo um capacitor carregando do zero atinge P% da tensão final, basta multiplicar τ por −ln(1 − P/100): para 50% é 0,693·τ; para 90% é 2,303·τ; para 95% é 3,00·τ.",
+    caution: "Não coloque a porcentagem atingida (ex.: 0,80) dentro do ln: o que entra no ln é a FRAÇÃO QUE FALTA para 100% (1 − 0,80 = 0,20)."
+  };
+  T[29].shortcut = {
+    title: "Reconhecimento de Ternas Pitagóricas Escaladas",
+    rule: "k·(3, 4, 5)   |   k·(5, 12, 13)   |   k·(8, 15, 17)   |   k·(7, 24, 25)",
+    when: "Antes de elevar catetos grandes ao quadrado, divida os dois lados pelo MDC deles: se virar (3,4), (5,12) ou (8,15), a hipotenusa sai de cabeça multiplicando 5, 13 ou 17 pelo mesmo MDC!",
+    caution: "Verifique sempre se o lado desconhecido é a HIPOTENUSA (maior lado, oposto a 90°) ou um CATETO. Se o dado for (3, 5) onde 5 é um cateto, a hipotenusa é √34, não 4!"
+  };
+  T[30].shortcut = {
+    title: "Escada √1, √2, √3 sobre 2 & Cateto Oposto a 30°",
+    rule: "Em 30°, 45°, 60°:  sen = √1/2, √2/2, √3/2  e  cos = √3/2, √2/2, √1/2\nEm todo triângulo retângulo de 30°:  Cateto oposto a 30° = metade da hipotenusa (L / 2).",
+    when: "Em rampas ou cabos inclinados a 30°, a altura atingida é imediatamente metade do comprimento da rampa (pois sen 30° = 0,5).",
+    caution: "Como θ é agudo no triângulo retângulo, sen²θ + cos²θ = 1 permite achar cos θ direto pela terna pitagórica sem passar por decimais."
+  };
+  T[31].shortcut = {
+    title: "Regra do Eixo Colado no Ângulo (Com Ângulo = Cosseno)",
+    rule: "Eixo COLADO no ângulo θ ⇒ F · cos θ   |   Eixo SEPARADO do ângulo θ ⇒ F · sen θ",
+    when: "Funciona para qualquer orientação de eixo (mesmo quando o ângulo é medido com a vertical): o eixo que encosta no arco do ângulo sempre recebe o cosseno.",
+    caution: "Confirme se as duas componentes Fₓ e Fᵧ não ultrapassam individualmente o módulo total F (nenhum cateto pode ser maior que a hipotenusa)."
+  };
+  T[32].shortcut = {
+    title: "Teste Extremo θ = 0° no Plano Inclinado & Triângulo 3-4-5 em Potência CA",
+    rule: "Plano inclinado: P_rampa = P·sen θ  e  N = P·cos θ\nSe FP = cos φ = 0,8 ⇒ sen φ = 0,6 e tg φ = 0,75 (triângulo 3-4-5 de potências!)",
+    when: "Em Engenharia Elétrica, cargas industriais com FP = 0,8 ou 0,6 formam exatamente o triângulo 3-4-5 entre P (W), Q (var) e S (VA), permitindo achar S e Q de cabeça.",
+    caution: "No plano inclinado, NUNCA esqueça de multiplicar a massa m por g (10 m/s²) antes de decompor o peso em newtons."
+  };
 })(window);
