@@ -42,7 +42,8 @@
       sessions: {},   // id -> progresso da sessão
       errors: [],     // [{t, sessionId, type}]
       timer: null,    // {sessionId, elapsedSec, offsetSec, running, savedAt}
-      audio: { type: "brown", volume: 0.35 }
+      audio: { type: "brown", volume: 0.35 },
+      tabuada: { stats: {}, history: [] } // módulo isolado de automação da tabuada (1..12)
     };
   }
 
