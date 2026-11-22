@@ -323,9 +323,10 @@
         '<div class="sc-box"><span class="sc-label mono">Quando Evitar / Controle Inibitório</span><p>' + esc(T.shortcut.caution) + '</p></div>' +
         '</div></section>'
       : "";
+    const visHTML = NE.Visuals ? NE.Visuals.renderBlock(NE.Visuals.forSession(sessionId), "Visualização do Conceito") : "";
     return '<div class="theory">' +
       '<h3 class="theory-title">Apostila Direta ao Ponto <span class="muted">(Teoria &amp; Engenharia)</span></h3>' +
-      '<section class="theory-block tb-logic"><h4><span class="tb-tag mono">A</span> A Lógica Estrutural</h4><div class="prose">' + T.logic + '</div></section>' +
+      '<section class="theory-block tb-logic"><h4><span class="tb-tag mono">A</span> A Lógica Estrutural</h4><div class="prose">' + T.logic + '</div>' + visHTML + '</section>' +
       '<section class="theory-block tb-algo"><h4><span class="tb-tag mono">B</span> Algoritmo Passo a Passo (Caminho Completo)</h4><ol class="recipe">' + algo + '</ol>' + ex + '</section>' +
       '<section class="theory-block tb-traps"><h4><span class="tb-tag mono">C</span> Armadilhas Clássicas de TDAH / Controle Inibitório</h4><ul class="trap-list">' + traps + '</ul></section>' +
       sc +
@@ -363,6 +364,7 @@
       '<div class="q-tabs" id="bn-tabs" role="tablist"></div>' +
       '<div class="q-card"><div class="q-meta"><span class="q-level mono" id="bn-level"></span><span class="q-fmt small muted" id="bn-fmt"></span></div>' +
       '<div class="q-text" id="bn-text"></div>' +
+      '<div class="q-visual" id="bn-visual"></div>' +
       '<label class="field"><span class="small muted">Rascunho estruturado — digite uma linha de raciocínio por passo, antes da resposta</span>' +
       '<textarea id="bn-scratch" class="mono" rows="5" spellcheck="false" placeholder="Linha 1: copiar os dados e as unidades&#10;Linha 2: ...&#10;Linha 3: ..."></textarea></label>' +
       '<label class="field"><span class="small muted">Resposta final</span>' +
@@ -473,6 +475,8 @@
       $("#bn-level").textContent = LEVEL_LABEL[curQ.level] + (key === "g" ? " · gerado" : "");
       $("#bn-fmt").textContent = curQ.kind === "list" ? "Vários valores — separe por ;" + (curQ.labels ? " (ordem: " + curQ.labels + ")" : "") : (curQ.fmt || "");
       $("#bn-text").innerHTML = curQ.text;
+      const vBox = $("#bn-visual");
+      if (vBox) vBox.innerHTML = NE.Visuals ? NE.Visuals.renderBlock(NE.Visuals.forQuestion(curQ), "Diagrama da Questão") : "";
       $("#bn-scratch").value = it.scratch || "";
       $("#bn-answer").value = it.answer || "";
       $("#bn-fb").className = "q-feedback";

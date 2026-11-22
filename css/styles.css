@@ -397,6 +397,17 @@ blockquote { margin: 1rem 0 0; padding: .5rem .9rem; border-left: 2px solid var(
 .sol-sc-head { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-bottom: .35rem; font-size: .9rem; color: var(--text); }
 .sc-badge { font-size: .68rem; color: var(--text-2); text-transform: uppercase; letter-spacing: .07em; padding: .12rem .5rem; border: 1px solid var(--border-strong); border-radius: 99px; background: var(--surface-2); }
 
+/* --------------- elementos visuais (diagramas SVG limpos) ---------------- */
+.vd-box { margin: .9rem 0 .25rem; padding: .85rem .95rem; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 10px; display: grid; gap: .55rem; }
+.vd-head { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.vd-badge { font-size: .67rem; color: var(--metal); text-transform: uppercase; letter-spacing: .08em; padding: .12rem .5rem; border: 1px solid var(--border-strong); border-radius: 99px; background: var(--bg); }
+.vd-title { font-size: .88rem; color: var(--text); font-weight: 600; }
+.vd-canvas { width: 100%; display: flex; justify-content: center; overflow: hidden; }
+.vd-svg { width: 100%; max-width: 540px; height: auto; display: block; }
+.vd-caption { font-size: .82rem; color: var(--text-2); line-height: 1.5; margin: 0; }
+.q-visual:empty { display: none; }
+.q-visual .vd-box { margin: 0 0 .9rem; background: var(--bg); }
+
 /* -------------------- fórmulas prontas & gaveta (FM) ---------------------- */
 .fm-toolbar { display: grid; gap: .9rem; margin-bottom: 1rem; }
 .fm-toolbar-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: .85rem; }
